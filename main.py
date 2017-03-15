@@ -1,3 +1,9 @@
+#!/usr/bin/python
+#coding=utf-8
+
+import os
+import sys
+
 from thinkutils.common_utils.think_hashlib import *
 from thinkutils.datetime.datetime import *
 from thinkutils.log.log import *

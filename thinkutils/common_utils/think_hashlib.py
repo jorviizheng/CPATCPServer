@@ -1,7 +1,6 @@
 import os
 import sys
 import hashlib
-import md5
 
 def md5_str(szText):
     return str(hashlib.md5(szText).hexdigest())
