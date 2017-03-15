@@ -10,5 +10,5 @@ def get_current_time_str():
 
 def timestamp2str(tt):
     t1 = time.localtime(float(tt))
-    t2 = time.strftime("%Y-%m-%d %H:%M:%S",t1)
-    return t2;
+    t2 = time.strftime("%Y-%m-%d %H:%M:%S", t1)
+    return t2

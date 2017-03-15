@@ -8,6 +8,7 @@ import requests
 from thinkutils.common_utils.think_hashlib import *
 from thinkutils.datetime.datetime import *
 from thinkutils.log.log import *
+from thinkutils.ffan.ffan import *
 
 logger = setup_custom_logger()
 
@@ -35,4 +36,6 @@ if __name__ == '__main__':
     logger.info(md5_file("main.py"))
 
     #do http post test
-    do_post_test()
+    # do_post_test()
+
+    load_page()
