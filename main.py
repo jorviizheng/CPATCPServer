@@ -4,6 +4,7 @@
 import os
 import sys
 import requests
+import redis
 
 from thinkutils.common_utils.think_hashlib import *
 from thinkutils.datetime.datetime import *
@@ -24,6 +25,11 @@ def do_post_test():
     r = requests.post("http://huina365.com/spfee/channel/getSms", data=payload)
     logger.info(r.text)
 
+pool = redis.ConnectionPool(host='thinkman-wang.com', port=6379, db=0)
+def redis_demo():
+    r = redis.StrictRedis(host='thinkman-wang.com', port="6379", password="Ab123456")
+    r.set("FXXK", "FXXXXXXXXXXKKKKK", ex=10)
+
 if __name__ == '__main__':
     # date time test
     logger.info("Test")
@@ -39,3 +45,6 @@ if __name__ == '__main__':
     # do_post_test()
 
     load_page()
+
+    #redis test
+    redis_demo()
