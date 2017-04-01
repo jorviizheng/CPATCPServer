@@ -37,6 +37,8 @@ if __name__ == '__main__':
     logger.info("date: %d" % (get_timestamp()))
     logger.info(get_current_time_str())
     logger.info(timestamp2str(get_timestamp()))
+    logger.info("yesterday ==> %s" % (yesterday(), ))
+    logger.info("5 days before ==> %s" % (diff_day(-5)))
 
     #
     logger.info(md5_str("123456"))
@@ -48,4 +50,4 @@ if __name__ == '__main__':
     # load_page()
 
     #redis test
-    redis_demo()
+    # redis_demo()

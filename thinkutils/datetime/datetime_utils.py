@@ -1,4 +1,5 @@
 import time
+from datetime import date, timedelta
 
 def get_timestamp():
     return int(time.time())
@@ -12,3 +13,11 @@ def timestamp2str(tt):
     t1 = time.localtime(float(tt))
     t2 = time.strftime("%Y-%m-%d %H:%M:%S", t1)
     return t2
+
+def yesterday():
+    yesterday = date.today() + timedelta(-1)
+    return yesterday.strftime('%Y-%m-%d')
+
+def diff_day(nDiff):
+    day = date.today() + timedelta(nDiff)
+    return day.strftime('%Y-%m-%d')
