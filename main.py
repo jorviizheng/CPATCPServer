@@ -36,6 +36,7 @@ if __name__ == '__main__':
     g_logger.info("date: %d" % (get_timestamp()))
     g_logger.info(get_current_time_str())
     g_logger.info(timestamp2str(get_timestamp()))
+    g_logger.error("FXXK")
 
     #
     g_logger.info(md5_str("123456"))

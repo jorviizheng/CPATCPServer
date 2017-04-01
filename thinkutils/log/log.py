@@ -3,11 +3,13 @@ import sys
 
 import logging
 import logging.handlers
+from rainbow_logging_handler import RainbowLoggingHandler
 
 def setup_custom_logger():
     LOG_FILE = 'app.log'
 
-    formatter = logging.Formatter('%(asctime)s [%(pathname)s: %(lineno)d] %(levelname)s %(message)s')
+    formatter = logging.Formatter("[%(asctime)s] %(name)s %(funcName)s():%(lineno)d  %(levelname)s \t%(message)s")  # same as default
+    # formatter = logging.Formatter('%(asctime)s [%(pathname)s: %(lineno)d] %(levelname)s %(message)s')
 
     file_handler = logging.FileHandler(LOG_FILE)
     file_handler.setFormatter(formatter)
