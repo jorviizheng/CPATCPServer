@@ -7,7 +7,7 @@ import logging.handlers
 def setup_custom_logger():
     LOG_FILE = 'app.log'
 
-    formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
+    formatter = logging.Formatter('%(asctime)s [%(filename)s: %(lineno)d] %(levelname)s %(message)s')
 
     file_handler = logging.FileHandler(LOG_FILE)
     file_handler.setFormatter(formatter)
