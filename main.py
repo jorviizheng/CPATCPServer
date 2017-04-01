@@ -37,6 +37,7 @@ if __name__ == '__main__':
     g_logger.info(get_current_time_str())
     g_logger.info(timestamp2str(get_timestamp()))
     g_logger.error("FXXK")
+    g_logger.warning("FXXXXXXXXXXXXXXXXXXXK")
 
     #
     g_logger.info(md5_str("123456"))
@@ -48,4 +49,4 @@ if __name__ == '__main__':
     # load_page()
 
     #redis test
-    redis_demo()
+    # redis_demo()
