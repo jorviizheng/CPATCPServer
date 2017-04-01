@@ -1,5 +1,8 @@
 import time
 from datetime import date, timedelta
+from thinkutils.log import *
+
+# logger = setup_custom_logger()
 
 def get_timestamp():
     return int(time.time())

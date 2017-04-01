@@ -12,7 +12,6 @@ from thinkutils.log.log import *
 from thinkutils.ffan.ffan import *
 from thinkutils.redis.think_redis import *
 
-logger = setup_custom_logger()
 
 def do_post_test():
     payload = {'mobile': '13558575725'
@@ -24,7 +23,7 @@ def do_post_test():
         , "extData": "P074565887"}
 
     r = requests.post("http://huina365.com/spfee/channel/getSms", data=payload)
-    logger.info(r.text)
+    g_logger.info(r.text)
 
 
 def redis_demo():
@@ -33,14 +32,14 @@ def redis_demo():
 
 if __name__ == '__main__':
     # date time test
-    logger.info("Test")
-    logger.info("date: %d" % (get_timestamp()))
-    logger.info(get_current_time_str())
-    logger.info(timestamp2str(get_timestamp()))
+    g_logger.info("Test")
+    g_logger.info("date: %d" % (get_timestamp()))
+    g_logger.info(get_current_time_str())
+    g_logger.info(timestamp2str(get_timestamp()))
 
     #
-    logger.info(md5_str("123456"))
-    logger.info(md5_file("main.py"))
+    g_logger.info(md5_str("123456"))
+    g_logger.info(md5_file("main.py"))
 
     #do http post test
     # do_post_test()
