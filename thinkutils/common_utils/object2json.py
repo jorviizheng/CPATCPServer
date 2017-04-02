@@ -25,7 +25,6 @@ import json
 def obj2json(obj):
     return json.dumps(obj, cls = ObjJsonEncoder)
 
-
 '''
 递归 py对象转dict
 '''

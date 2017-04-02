@@ -11,6 +11,9 @@ from tornado.web import Application, RequestHandler
 from tornado.ioloop import IOLoop
 from tornado.options import define, options
 from thinkutils.log.log import *
+from thinkutils.common_utils.object2json import *
+import json
+from models.TCPPackage import *
 
 g_connections = set()
 
@@ -29,6 +32,8 @@ class TCPConnection(object):
 
     def read_messages(self, data):
         g_logger.info("Receive message: %s" % (data[:-1], ))
+        package = TCPPackage.from_json(data[:-1])
+        g_logger.info("Receive message: %d" % (package.code,))
         self.on_message()
 
     def send_message(self, data):

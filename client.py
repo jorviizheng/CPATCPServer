@@ -11,6 +11,7 @@ import threading
 import time
 import json
 from thinkutils.common_utils.object2json import *
+from CPATCPServer.models.TCPPackage import *
 
 class TCPClient(object):
     def __init__(self, host, port, io_loop=None):
@@ -55,10 +56,10 @@ io_loop = tornado.ioloop.IOLoop.instance()
 c1 = TCPClient("127.0.0.1", 9001, io_loop)
 
 def heartbeat_worker(conn):
-    g_logger.info("HEHE")
     while True:
         g_logger.info("Send heartbeat")
-        conn.send_message(b"heartbeat")
+        heartbeat = TCPPackage()
+        conn.send_message(obj2json(heartbeat))
         time.sleep(5)
 
 def main():
