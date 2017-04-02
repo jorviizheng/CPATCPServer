@@ -60,6 +60,7 @@ def heartbeat_worker(conn):
         g_logger.info("Send heartbeat")
         heartbeat = TCPPackage()
         conn.send_message(obj2json(heartbeat))
+        conn.send_message("hearbbeat")
         time.sleep(5)
 
 def main():
