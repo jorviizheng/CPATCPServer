@@ -26,7 +26,6 @@ from controller.broadcast import *
 
 define('tcp_port', default=9001)
 define('http_port', default=9000)
-define('host', default='localhost')
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -40,14 +39,15 @@ application = Application([
 def main():
     # http server
     http_server = HTTPServer(application)
-    http_server.listen(options.http_port, options.host)
+    http_server.listen(options.http_port)
 
     # tcp server
     server = CPATCPServer()
-    server.listen(options.tcp_port, options.host)
+    server.listen(options.tcp_port)
     print('Server started...')
 
-    tornado.ioloop.IOLoop.current().start()
+    # tornado.ioloop.IOLoop.current().start()
+    tornado.ioloop.IOLoop.instance().start()
 
 
 if __name__ == '__main__':

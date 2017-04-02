@@ -12,11 +12,11 @@ from tornado.ioloop import IOLoop
 from tornado.options import define, options
 
 
-class Connection(object):
+class TCPConnection(object):
     clients = set()
 
     def __init__(self, stream, address):
-        Connection.clients.add(self)
+        TCPConnection.clients.add(self)
         self._stream = stream
         self._address = address
         self._stream.set_close_callback(self.on_close)
@@ -28,7 +28,7 @@ class Connection(object):
 
     def broadcast_messages(self, data):
         print "broadcast message:", data[:-1], self._address
-        for conn in Connection.clients:
+        for conn in TCPConnection.clients:
             conn.send_message(data)
         self.read_message()
 
@@ -37,10 +37,10 @@ class Connection(object):
 
     def on_close(self):
         print "A user has left the chat room.", self._address
-        Connection.clients.remove(self)
+        TCPConnection.clients.remove(self)
 
 class CPATCPServer(TCPServer):
     @tornado.gen.coroutine
     def handle_stream(self, stream, address):
         print("New connection" , address, stream)
-        Connection(stream, address)
+        TCPConnection(stream, address)
