@@ -34,7 +34,7 @@ class TCPClient(object):
 
     def on_receive(self, data):
         g_logger.info("Received: %s", data)
-        self.stream.close()
+        self.stream.read_until(self.EOF, self.on_receive)
 
     def on_close(self):
         if self.shutdown:
@@ -45,9 +45,8 @@ class TCPClient(object):
         self.stream.read_until(self.EOF, self.on_receive)
 
     def send_message(self, szMsg):
-        g_logger.info("Send message....")
+        g_logger.info("Send message: %s" % (szMsg, ))
         self.stream.write(szMsg + self.EOF)
-        g_logger.info("After send....")
 
     def set_shutdown(self):
         self.shutdown = True
@@ -60,7 +59,6 @@ def heartbeat_worker(conn):
         g_logger.info("Send heartbeat")
         heartbeat = TCPPackage()
         conn.send_message(obj2json(heartbeat))
-        conn.send_message("hearbbeat")
         time.sleep(5)
 
 def main():

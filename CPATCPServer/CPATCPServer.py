@@ -14,17 +14,20 @@ from thinkutils.log.log import *
 from thinkutils.common_utils.object2json import *
 import json
 from models.TCPPackage import *
+from thinkutils.datetime.datetime_utils import *
 
 g_connections = set()
 
 class TCPConnection(object):
-
     def __init__(self, stream, address):
         g_connections.add(self)
         self._stream = stream
         self._address = address
         self._stream.set_close_callback(self.on_close)
+        self._connect_time = get_timestamp()
+        self._update_time = get_timestamp()
         self.on_message()
+        self._EOF = b'\n'
         g_logger.info("A new user connected %s" % (address, ))
 
     def on_message(self):
@@ -33,6 +36,7 @@ class TCPConnection(object):
     def read_messages(self, data):
         try:
             package = TCPPackage.from_json(data[:-1])
+            self.send_message(b"hehe")
             g_logger.info("Receive message code : %d data: %s" % (package.code,package.data))
         except ValueError, e:
             g_logger.info("Not a valid package, pass!")
@@ -40,7 +44,7 @@ class TCPConnection(object):
         self.on_message()
 
     def send_message(self, data):
-        self._stream.write(data)
+        self._stream.write(data + '\n')
 
     def on_close(self):
         g_connections.remove(self)
@@ -50,3 +54,5 @@ class CPATCPServer(TCPServer):
     def handle_stream(self, stream, address):
         g_logger.info("New connection %s %s" % (address, stream))
         TCPConnection(stream, address)
+
+# def broadcast_checker():

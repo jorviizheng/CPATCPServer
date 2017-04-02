@@ -12,4 +12,7 @@ class Broadcast(tornado.web.RequestHandler):
 
         szMsg = self.get_argument("msg")
         # Connection.broadcast_messages(szMsg)
+        for conn in g_connections:
+            conn.send_message(b"123")
+
         self.write("Success")
