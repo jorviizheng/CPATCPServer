@@ -20,17 +20,17 @@ class TCPConnection(object):
         self._stream = stream
         self._address = address
         self._stream.set_close_callback(self.on_close)
-        self.read_message()
+        self.on_message()
         print "A new user has entered the chat room.", address
 
-    def read_message(self):
-        self._stream.read_until('\n', self.broadcast_messages)
+    def on_message(self):
+        self._stream.read_until('\n', self.read_messages)
 
-    def broadcast_messages(self, data):
-        print "broadcast message:", data[:-1], self._address
-        for conn in g_connections:
-            conn.send_message(data)
-        self.read_message()
+    def read_messages(self, data):
+        print "Receive message:", data[:-1]
+        # for conn in g_connections:
+        #     conn.send_message(data)
+        self.on_message()
 
     def send_message(self, data):
         self._stream.write(data)
