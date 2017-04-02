@@ -9,6 +9,8 @@ import socket
 from thinkutils.log.log import *
 import threading
 import time
+import json
+from thinkutils.common_utils.object2json import *
 
 class TCPClient(object):
     def __init__(self, host, port, io_loop=None):
