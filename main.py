@@ -44,11 +44,10 @@ def main():
     # tcp server
     server = CPATCPServer()
     server.listen(options.tcp_port)
-    print('Server started...')
+    g_logger.info('Server started...')
 
     # tornado.ioloop.IOLoop.current().start()
     tornado.ioloop.IOLoop.instance().start()
-
 
 if __name__ == '__main__':
     main()

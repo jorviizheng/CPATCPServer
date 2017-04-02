@@ -7,6 +7,8 @@ import tornado.ioloop
 import tornado.iostream
 import socket
 from thinkutils.log.log import *
+import threading
+import time
 
 class TCPClient(object):
     def __init__(self, host, port, io_loop=None):
@@ -25,7 +27,7 @@ class TCPClient(object):
 
     def connect(self):
         self.get_stream()
-        self.stream.connect((self.host, self.port), self.send_message)
+        self.stream.connect((self.host, self.port), self.on_connect)
 
     def on_receive(self, data):
         g_logger.info("Received: %s", data)
@@ -35,22 +37,33 @@ class TCPClient(object):
         if self.shutdown:
             self.io_loop.stop()
 
-    def send_message(self):
-        g_logger.info("Send message....")
-        self.stream.write(b"Hello Server!" + self.EOF)
+    def on_connect(self):
+        g_logger.info("Connected")
         self.stream.read_until(self.EOF, self.on_receive)
+
+    def send_message(self, szMsg):
+        g_logger.info("Send message....")
+        self.stream.write(szMsg + self.EOF)
         g_logger.info("After send....")
 
     def set_shutdown(self):
         self.shutdown = True
 
+io_loop = tornado.ioloop.IOLoop.instance()
+c1 = TCPClient("127.0.0.1", 9001, io_loop)
+
+def heartbeat_worker(conn):
+    g_logger.info("HEHE")
+    while True:
+        g_logger.info("Send heartbeat")
+        conn.send_message(b"heartbeat")
+        time.sleep(5)
+
 def main():
-    io_loop = tornado.ioloop.IOLoop.instance()
-    c1 = TCPClient("127.0.0.1", 9001, io_loop)
-    c2 = TCPClient("127.0.0.1", 9001, io_loop)
     c1.connect()
-    c2.connect()
-    # c2.set_shutdown()
+    t = threading.Thread(target=heartbeat_worker, args=(c1,))
+    t.start()
+
     g_logger.info("**********************start ioloop******************")
     io_loop.start()
 
