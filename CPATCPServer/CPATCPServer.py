@@ -36,7 +36,6 @@ class TCPConnection(object):
     def read_messages(self, data):
         try:
             package = TCPPackage.from_json(data[:-1])
-            self.send_message(b"hehe")
             g_logger.info("Receive message code : %d data: %s" % (package.code,package.data))
         except ValueError, e:
             g_logger.info("Not a valid package, pass!")
