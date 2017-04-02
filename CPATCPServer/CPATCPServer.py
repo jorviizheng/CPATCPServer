@@ -23,15 +23,15 @@ class TCPConnection(object):
         g_connections.add(self)
         self._stream = stream
         self._address = address
-        self._stream.set_close_callback(self.on_close)
         self._connect_time = get_timestamp()
         self._update_time = get_timestamp()
-        self.on_message()
         self._EOF = b'\n'
+        self._stream.set_close_callback(self.on_close)
+        self.on_message()
         g_logger.info("A new user connected %s" % (address, ))
 
     def on_message(self):
-        self._stream.read_until('\n', self.read_messages)
+        self._stream.read_until(self._EOF, self.read_messages)
 
     def read_messages(self, data):
         try:
@@ -44,7 +44,7 @@ class TCPConnection(object):
         self.on_message()
 
     def send_message(self, data):
-        self._stream.write(data + '\n')
+        self._stream.write(data + self._EOF)
 
     def on_close(self):
         g_connections.remove(self)
