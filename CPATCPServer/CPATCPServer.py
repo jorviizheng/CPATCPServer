@@ -25,7 +25,7 @@ class TCPConnection(object):
         self._address = address
         self._connect_time = get_timestamp()
         self._update_time = get_timestamp()
-        self._EOF = b'\n'
+        self._EOF = '\n'
         self._stream.set_close_callback(self.on_close)
         self.on_message()
         g_logger.info("A new user connected %s" % (address, ))
