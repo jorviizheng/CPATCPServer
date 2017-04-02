@@ -11,4 +11,5 @@ class Broadcast(tornado.web.RequestHandler):
         print("Request from %s" % (self.request.remote_ip, ))
 
         szMsg = self.get_argument("msg")
+        # Connection.broadcast_messages(szMsg)
         self.write("Success")
