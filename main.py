@@ -25,7 +25,7 @@ from CPATCPServer.CPATCPServer import *
 from controller.broadcast import *
 
 define('tcp_port', default=9001)
-define('http_port', default=9000)
+define('http_port', default=9002)
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
