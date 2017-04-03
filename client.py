@@ -70,7 +70,7 @@ def heartbeat_worker():
 def main():
     io_loop = tornado.ioloop.IOLoop.instance()
 
-    for i in range(g_tcp_conns):
+    for i in range(g_conn_num):
         c = TCPClient("50.116.10.36", 9001, io_loop)
         c.connect()
 
