@@ -33,7 +33,8 @@ class TCPClient(object):
         self.stream.connect((self.host, self.port), self.on_connect)
 
     def on_receive(self, data):
-        g_logger.info("Received: %s", data.decode("utf-8"))
+        if len(data.decode("utf-8").strip()) > 0:
+            g_logger.info("Received: %s", data.decode("utf-8"))
         self.stream.read_until(self._EOF, self.on_receive)
 
     def on_close(self):
