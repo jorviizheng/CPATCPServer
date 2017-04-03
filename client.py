@@ -21,7 +21,7 @@ class TCPClient(object):
         self.shutdown = False
         self.stream = None
         self.sock_fd = None
-        self.EOF = b'\n'
+        self._EOF = '\0'
 
     def get_stream(self):
         self.sock_fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
@@ -34,7 +34,7 @@ class TCPClient(object):
 
     def on_receive(self, data):
         g_logger.info("Received: %s", data.decode("utf-8"))
-        self.stream.read_until(self.EOF, self.on_receive)
+        self.stream.read_until(self._EOF, self.on_receive)
 
     def on_close(self):
         if self.shutdown:
@@ -42,11 +42,11 @@ class TCPClient(object):
 
     def on_connect(self):
         g_logger.info("Connected")
-        self.stream.read_until(self.EOF, self.on_receive)
+        self.stream.read_until(self._EOF, self.on_receive)
 
     def send_message(self, szMsg):
         g_logger.info("Send message: %s" % (szMsg, ))
-        self.stream.write(szMsg + self.EOF)
+        self.stream.write(szMsg + self._EOF)
 
     def set_shutdown(self):
         self.shutdown = True
