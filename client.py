@@ -52,13 +52,13 @@ class TCPClient(object):
         self.shutdown = True
 
 io_loop = tornado.ioloop.IOLoop.instance()
-c1 = TCPClient("127.0.0.1", 9001, io_loop)
+c1 = TCPClient("50.116.10.36", 9001, io_loop)
 
 def heartbeat_worker(conn):
     while True:
-        g_logger.info("Send heartbeat")
+        # g_logger.info("Send heartbeat")
         heartbeat = TCPPackage()
-        heartbeat.data = "你好"
+        # heartbeat.data = "你好"
         conn.send_message(obj2json(heartbeat))
         time.sleep(5)
 
