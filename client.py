@@ -14,7 +14,7 @@ from thinkutils.common_utils.object2json import *
 from CPATCPServer.models.TCPPackage import *
 
 g_tcp_conns = set()
-g_conn_num = 20480
+g_conn_num = 10240
 
 class TCPClient(object):
     def __init__(self, host, port, io_loop=None):
