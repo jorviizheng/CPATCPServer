@@ -15,8 +15,8 @@ from CPATCPServer.models.TCPPackage import *
 
 class TCPClient(object):
     test_start = False
-    max_connected = 20
-    test_num = 20
+    max_connected = 20000
+    test_num = 20000
     test_remain = test_num
     test_count = 0
     total_count = 0
