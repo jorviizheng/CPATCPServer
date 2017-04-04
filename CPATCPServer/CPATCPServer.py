@@ -40,7 +40,7 @@ class TCPConnection(object):
         except ValueError, e:
             g_logger.info("%s Not a valid package, pass!" % (data[:-1], ))
 
-        self.send_message("hehe".encode("utf-8") + self._EOF)
+        # self.send_message("hehe".encode("utf-8") + self._EOF)
         self.on_message()
 
     def send_message(self, data):
