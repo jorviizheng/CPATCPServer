@@ -4,6 +4,8 @@ import sys
 import logging
 import logging.handlers
 from rainbow_logging_handler import RainbowLoggingHandler
+from logging.handlers import TimedRotatingFileHandler
+
 
 def setup_custom_logger():
     LOG_FILE = 'app.log'
@@ -26,6 +28,12 @@ def setup_custom_logger():
     handler = RainbowLoggingHandler(sys.stderr, color_funcName=('black', 'yellow', True))
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+
+    #Add file handler
+    handler = TimedRotatingFileHandler(LOG_FILE,
+                                       when="h",
+                                       interval=1,
+                                       backupCount=48)
 
     # try:
     #     raise RuntimeError("Opa!")
