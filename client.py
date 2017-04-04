@@ -64,9 +64,14 @@ def heartbeat_worker():
     while True:
         time.sleep(60)
         for conn in g_tcp_conns:
-            heartbeat = TCPPackage()
-            # heartbeat.data = "你好"
-            conn.send_message(obj2json(heartbeat))
+            try:
+                heartbeat = TCPPackage()
+                # heartbeat.data = "你好"
+                conn.send_message(obj2json(heartbeat))
+            except Exception:
+                pass
+            finally:
+                pass
 
 def main():
     io_loop = tornado.ioloop.IOLoop.instance()
