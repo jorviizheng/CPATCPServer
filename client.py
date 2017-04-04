@@ -61,12 +61,12 @@ class TCPClient(object):
 
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")
-    for conn in g_tcp_conns:
-        heartbeat = TCPPackage()
-        # heartbeat.data = "你好"
-        conn.send_message(obj2json(heartbeat))
-
-    timer = Timer(60, heartbeat_worker)
+    while True:
+        time.sleep(60)
+        for conn in g_tcp_conns:
+            heartbeat = TCPPackage()
+            # heartbeat.data = "你好"
+            conn.send_message(obj2json(heartbeat))
 
 def main():
     io_loop = tornado.ioloop.IOLoop.instance()
@@ -76,10 +76,8 @@ def main():
         c.connect()
 
     t = threading.Thread(target=heartbeat_worker)
+    t.daemon = True
     t.start()
-
-    timer = Timer(60, heartbeat_worker)
-    timer.start()
 
     g_logger.info("**********************start ioloop******************")
     io_loop.start()
