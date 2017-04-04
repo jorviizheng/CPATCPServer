@@ -37,6 +37,9 @@ class TCPConnection(object):
         try:
             package = TCPPackage.from_json(data[:-1])
             g_logger.info("Receive message code : %d data: %s" % (package.code,package.data))
+
+            if 0 == package.code: #heartbeat
+                self.send_message(obj2json(package))
         except ValueError, e:
             g_logger.info("%s Not a valid package, pass!" % (data[:-1], ))
 
@@ -44,7 +47,12 @@ class TCPConnection(object):
         self.on_message()
 
     def send_message(self, data):
-        self._stream.write(data + self._EOF)
+        try:
+            self._stream.write(data + self._EOF)
+        except:
+            pass
+        finally:
+            pass
 
     def on_close(self):
         g_connections.remove(self)
