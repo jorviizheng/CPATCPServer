@@ -40,6 +40,13 @@ class TCPClient(object):
     def on_receive(self, data):
         if len(data.decode("utf-8").strip()) > 0:
             g_logger.info("Received: %s", data.decode("utf-8"))
+            try:
+                package = TCPPackage.from_json(data[:-1].decode("utf-8"))
+                g_logger.info("Receive message code : %d data: %s" % (package.code, package.data))
+            except:
+                pass
+            finally:
+                pass
         self.stream.read_until(self._EOF, self.on_receive)
 
     def on_close(self):
