@@ -49,16 +49,11 @@ class PostToRemote(tornado.web.RequestHandler):
                 g_logger.info(szVal[0].encode("utf-8"))
                 dictRet = json.loads(szVal[0].encode("utf-8"))
                 if szVal != None:
-                    g_logger.info(szVal)
                     self.write(dictRet["data"])
                     return
 
             yield tornado.gen.sleep(0.5)
 
-        self.finish(json.dumps(szVal))
+        # self.finish(json.dumps(szVal))
         # self.write("success".encode("utf-8"))
-
-    def on_message(self, szMsg):
-        g_logger.info(szMsg)
-        return "success"
 
