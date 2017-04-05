@@ -42,16 +42,16 @@ class TCPConnection(object):
 
     def read_messages(self, data):
         try:
-            package = TCPPackage.from_json(data[:-1])
-            g_logger.info("Receive message code : %d data: %s" % (package.code,package.data))
-            if self._on_message_callback != None:
-                for callback in self._on_message_callback:
-                    callback(data[:-1])
+            package = json.loads(data[:-1])
+            # g_logger.info("Receive message code : %d data: %s" % (int(package["code"]), package[data]))
+            # if self._on_message_callback != None:
+            #     for callback in self._on_message_callback:
+            #         callback(data[:-1])
 
-            if 0 == package.code: #heartbeat
+            if 0 == package["code"]: #heartbeat
                 self.send_message(obj2json(package))
 
-            if g_code_do_budiness_ret == package.code:
+            if g_code_do_budiness_ret == package["code"]:
                 self.save_to_redis(package)
 
         except ValueError, e:
@@ -74,7 +74,11 @@ class TCPConnection(object):
     def save_to_redis(self, package):
         r = redis.StrictRedis(connection_pool=g_redis_pool)
         szKey = "actions_" + today()
-        r.hmset(szKey, obj2json(package))
+        g_logger.info("redis key %s", (szKey, ))
+        dicRedis = {}
+        dicRedis[package["actionID"]] = obj2json(package)
+        r.hmset(szKey, dicRedis)
+        # szVal = r.hmget(szKey, )
         pass
 
 class CPATCPServer(TCPServer):

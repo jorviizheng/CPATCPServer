@@ -39,10 +39,18 @@ class PostToRemote(tornado.web.RequestHandler):
             conn.send_message(obj2json(package))
             # conn.add_on_message_callback(self.on_message())
             break
-        # conn.add_on_message_callback(self.on_message())
 
-        # if 1 == dicJson["httpInfo"]["needResp"]:
-        #     conn = random.sample(g_connections, 1)
+        # r = redis.StrictRedis(connection_pool=g_redis_pool)
+        # szKey = "actions_" + today()
+        # for i in range(15):
+        #     if r.exists(szKey):
+        #         szVal = r.hmget(szKey, package.actionID)
+        #         if szVal != None:
+        #             g_logger.info(szVal)
+        #             self.write(szVal)
+        #             return
+        #
+        #     time.sleep(3)
 
         self.write("success")
 
