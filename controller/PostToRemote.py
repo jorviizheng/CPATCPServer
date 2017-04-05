@@ -6,6 +6,10 @@ from tornado.httpserver import HTTPServer
 from tornado.web import Application, RequestHandler
 from CPATCPServer.CPATCPServer import *
 import random
+from CPATCPServer.codes import *
+import base64
+
+g_reqursts = {}
 
 class PostToRemote(tornado.web.RequestHandler):
     def get(self):
@@ -23,9 +27,16 @@ class PostToRemote(tornado.web.RequestHandler):
         dicJson = json.loads(szBody)
         g_logger.info("Receive post request, body: %s" % (szBody, ))
         g_logger.info("needResp: %d" % (dicJson["httpInfo"]["needResp"],))
+        g_reqursts[dicJson["actionID"]] = dicJson
 
         for conn in g_connections:
-            conn.send_message(szBody.encode("utf-8"))
+            package = TCPPackage()
+            package.code = g_code_do_budiness
+            package.actionID = dicJson["actionID"]
+            package.sessionID = dicJson["sessionID"]
+            package.data = base64.b64encode(szBody.encode("utf-8"))
+            g_logger.info(package.data)
+            conn.send_message(obj2json(package))
             # conn.add_on_message_callback(self.on_message())
             break
         # conn.add_on_message_callback(self.on_message())

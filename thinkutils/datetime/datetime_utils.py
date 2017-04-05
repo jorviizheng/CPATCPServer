@@ -17,6 +17,10 @@ def timestamp2str(tt):
     t2 = time.strftime("%Y-%m-%d %H:%M:%S", t1)
     return t2
 
+def today():
+    today = date.today()
+    return today.strftime('%Y-%m-%d')
+
 def yesterday():
     yesterday = date.today() + timedelta(-1)
     return yesterday.strftime('%Y-%m-%d')

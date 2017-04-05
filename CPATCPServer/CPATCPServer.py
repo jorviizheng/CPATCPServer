@@ -15,6 +15,8 @@ from thinkutils.common_utils.object2json import *
 import json
 from models.TCPPackage import *
 from thinkutils.datetime.datetime_utils import *
+from codes import *
+from thinkutils.redis.think_redis import *
 
 g_connections = set()
 
@@ -48,6 +50,10 @@ class TCPConnection(object):
 
             if 0 == package.code: #heartbeat
                 self.send_message(obj2json(package))
+
+            if g_code_do_budiness_ret == package.code:
+                self.save_to_redis(package)
+
         except ValueError, e:
             g_logger.info("%s Not a valid package, pass!" % (data[:-1], ))
 
@@ -64,6 +70,12 @@ class TCPConnection(object):
 
     def on_close(self):
         g_connections.remove(self)
+
+    def save_to_redis(self, package):
+        r = redis.StrictRedis(connection_pool=g_redis_pool)
+        szKey = "actions_" + today()
+        r.hmset(szKey, obj2json(package))
+        pass
 
 class CPATCPServer(TCPServer):
     @tornado.gen.coroutine

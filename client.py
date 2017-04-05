@@ -14,6 +14,10 @@ from thinkutils.common_utils.object2json import *
 from CPATCPServer.models.TCPPackage import *
 from threading import Timer
 import requests
+import base64
+from CPATCPServer.codes import *
+import sys
+import traceback
 
 g_tcp_conns = set()
 g_conn_num = 2
@@ -39,18 +43,20 @@ class TCPClient(object):
 
     def on_receive(self, data):
         if len(data.decode("utf-8").strip()) > 0:
-            g_logger.info("Received: %s", data.decode("utf-8"))
+            g_logger.info("Received: %s", data[:-1].decode("utf-8"))
             try:
-
-                try:
-                    package = TCPPackage.from_json(data[:-1].decode("utf-8"))
+                json_dict = json.loads(data[:-1].decode("utf-8"))
+                if g_code_do_budiness == json_dict["code"]:
+                    package = TCPPackage(code = json_dict["code"], sessionID = json_dict["sessionID"], actionID = json_dict["actionID"], data = json_dict["data"])
                     g_logger.info("Receive message code : %d data: %s" % (package.code, package.data))
-                except Exception:
-                    pass
-
-                dicJson = json.loads(data[:-1])
-                self.do_bussiness(dicJson)
-            except Exception:
+                    szJson = base64.decodestring(package.data)
+                    g_logger.info(package.data)
+                    dicJson = json.loads(szJson)
+                    g_logger.info(szJson)
+                    self.do_bussiness(dicJson)
+            except Exception,e:
+                g_logger.error(e)
+                traceback.print_exc()
                 pass
             finally:
                 pass
@@ -79,10 +85,21 @@ class TCPClient(object):
 
         if "GET" == szMethod.upper():
             r = requests.get(szUrl, headers=dicHeader)
-            g_logger.info(r.text)
+            szRet = r.text
+            g_logger.info(szRet)
         else:
             r = requests.post(szUrl, headers=dicHeader)
-            g_logger.info(r.text)
+            szRet = r.text
+            g_logger.info(szRet)
+
+        package = TCPPackage()
+        package.code = g_code_do_budiness_ret
+        package.actionID = dicJson["actionID"]
+        package.sessionID = dicJson["sessionID"]
+        package.data = base64.encodestring(szRet.encode("utf-8"))
+
+        # g_logger.info("Return value to Server: %s" % (obj2json(package)))
+        self.send_message(obj2json(package))
 
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")
