@@ -28,15 +28,23 @@ class TCPConnection(object):
         self._EOF = '\0'
         self._stream.set_close_callback(self.on_close)
         self.on_message()
+        self._on_message_callback = set()
         g_logger.info("A new user connected %s" % (address, ))
 
     def on_message(self):
         self._stream.read_until(self._EOF, self.read_messages)
 
+    def add_on_message_callback(self, callback=None):
+        if None != callback:
+            self._on_message_callback.add(callback)
+
     def read_messages(self, data):
         try:
             package = TCPPackage.from_json(data[:-1])
             g_logger.info("Receive message code : %d data: %s" % (package.code,package.data))
+            if self._on_message_callback != None:
+                for callback in self._on_message_callback:
+                    callback(data[:-1])
 
             if 0 == package.code: #heartbeat
                 self.send_message(obj2json(package))

@@ -16,7 +16,7 @@ from threading import Timer
 
 
 g_tcp_conns = set()
-g_conn_num = 10240
+g_conn_num = 2
 
 class TCPClient(object):
     def __init__(self, host, port, io_loop=None):
@@ -84,7 +84,7 @@ def main():
     io_loop = tornado.ioloop.IOLoop.instance()
 
     for i in range(g_conn_num):
-        c = TCPClient("50.116.10.36", 9001, io_loop)
+        c = TCPClient("127.0.0.1", 9001, io_loop)
         c.connect()
 
     t = threading.Thread(target=heartbeat_worker)

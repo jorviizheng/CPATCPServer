@@ -23,6 +23,7 @@ from tornado.ioloop import IOLoop
 from tornado.options import define, options
 from CPATCPServer.CPATCPServer import *
 from controller.broadcast import *
+from controller.PostToRemote import *
 
 define('tcp_port', default=9001)
 define('http_port', default=9002)
@@ -34,6 +35,7 @@ class MainHandler(tornado.web.RequestHandler):
 application = Application([
     (r'/', MainHandler),
     (r'/broadcast', Broadcast),
+    (r'/post_to_remote', PostToRemote),
 ])
 
 def main():
