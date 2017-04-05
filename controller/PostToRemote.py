@@ -26,6 +26,7 @@ class PostToRemote(tornado.web.RequestHandler):
 
         for conn in g_connections:
             conn.send_message(szBody.encode("utf-8"))
+            # conn.add_on_message_callback(self.on_message())
             break
         # conn.add_on_message_callback(self.on_message())
 

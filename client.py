@@ -13,7 +13,7 @@ import json
 from thinkutils.common_utils.object2json import *
 from CPATCPServer.models.TCPPackage import *
 from threading import Timer
-
+import requests
 
 g_tcp_conns = set()
 g_conn_num = 2
@@ -41,9 +41,16 @@ class TCPClient(object):
         if len(data.decode("utf-8").strip()) > 0:
             g_logger.info("Received: %s", data.decode("utf-8"))
             try:
-                package = TCPPackage.from_json(data[:-1].decode("utf-8"))
-                g_logger.info("Receive message code : %d data: %s" % (package.code, package.data))
-            except:
+
+                try:
+                    package = TCPPackage.from_json(data[:-1].decode("utf-8"))
+                    g_logger.info("Receive message code : %d data: %s" % (package.code, package.data))
+                except Exception:
+                    pass
+
+                dicJson = json.loads(data[:-1])
+                self.do_bussiness(dicJson)
+            except Exception:
                 pass
             finally:
                 pass
@@ -65,6 +72,17 @@ class TCPClient(object):
     def set_shutdown(self):
         self.shutdown = True
 
+    def do_bussiness(self, dicJson):
+        dicHeader = dicJson["httpInfo"]["header"]
+        szUrl = dicJson["httpInfo"]["requrl"]
+        szMethod = dicJson["httpInfo"]["method"]
+
+        if "GET" == szMethod.upper():
+            r = requests.get(szUrl, headers=dicHeader)
+            g_logger.info(r.text)
+        else:
+            r = requests.post(szUrl, headers=dicHeader)
+            g_logger.info(r.text)
 
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")
