@@ -46,9 +46,11 @@ class PostToRemote(tornado.web.RequestHandler):
         for i in range(60):
             if r.exists(szKey):
                 szVal = r.hmget(szKey, package.actionID)
+                g_logger.info(szVal[0].encode("utf-8"))
+                dictRet = json.loads(szVal[0].encode("utf-8"))
                 if szVal != None:
                     g_logger.info(szVal)
-                    self.write(str(szVal).encode("utf-8"))
+                    self.write(dictRet["data"])
                     return
 
             yield tornado.gen.sleep(0.5)
