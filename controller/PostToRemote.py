@@ -43,7 +43,7 @@ class PostToRemote(tornado.web.RequestHandler):
 
         r = redis.StrictRedis(connection_pool=g_redis_pool)
         szKey = "actions_" + today()
-        for i in range(15):
+        for i in range(60):
             if r.exists(szKey):
                 szVal = r.hmget(szKey, package.actionID)
                 if szVal != None:
@@ -51,7 +51,7 @@ class PostToRemote(tornado.web.RequestHandler):
                     self.write(str(szVal).encode("utf-8"))
                     return
 
-            yield tornado.gen.sleep(2)
+            yield tornado.gen.sleep(0.5)
 
         self.finish(json.dumps(szVal))
         # self.write("success".encode("utf-8"))
