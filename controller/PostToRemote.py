@@ -22,6 +22,7 @@ class PostToRemote(tornado.web.RequestHandler):
 
         self.write("Success")
 
+    @tornado.gen.coroutine
     def post(self):
         szBody = self.request.body
         dicJson = json.loads(szBody)
@@ -40,19 +41,20 @@ class PostToRemote(tornado.web.RequestHandler):
             # conn.add_on_message_callback(self.on_message())
             break
 
-        # r = redis.StrictRedis(connection_pool=g_redis_pool)
-        # szKey = "actions_" + today()
-        # for i in range(15):
-        #     if r.exists(szKey):
-        #         szVal = r.hmget(szKey, package.actionID)
-        #         if szVal != None:
-        #             g_logger.info(szVal)
-        #             self.write(szVal)
-        #             return
-        #
-        #     time.sleep(3)
+        r = redis.StrictRedis(connection_pool=g_redis_pool)
+        szKey = "actions_" + today()
+        for i in range(15):
+            if r.exists(szKey):
+                szVal = r.hmget(szKey, package.actionID)
+                if szVal != None:
+                    g_logger.info(szVal)
+                    self.write(str(szVal).encode("utf-8"))
+                    return
 
-        self.write("success")
+            yield tornado.gen.sleep(2)
+
+        self.finish(json.dumps(szVal))
+        # self.write("success".encode("utf-8"))
 
     def on_message(self, szMsg):
         g_logger.info(szMsg)
