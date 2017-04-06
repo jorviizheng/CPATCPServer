@@ -132,7 +132,7 @@ def setup_custom_logger():
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
 
-    file_handler = ParallelTimedRotatingFileHandler(LOG_FILE)
+    file_handler = ParallelTimedRotatingFileHandler(LOG_FILE, when='H')
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
