@@ -10,7 +10,7 @@ from logging.handlers import TimedRotatingFileHandler
 def setup_custom_logger():
     LOG_FILE = 'log/app.log'
 
-    formatter = logging.Formatter("[%(asctime)s] %(name)s %(funcName)s():%(lineno)d  %(levelname)s \t%(message)s")  # same as default
+    formatter = logging.Formatter("[%(asctime)s] %(pathname)s %(funcName)s():%(lineno)d  %(levelname)s \t%(message)s")  # same as default
     # formatter = logging.Formatter('%(asctime)s [%(pathname)s: %(lineno)d] %(levelname)s %(message)s')
 
     logger = logging.getLogger()
