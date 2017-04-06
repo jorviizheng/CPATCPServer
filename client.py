@@ -18,6 +18,7 @@ import base64
 from CPATCPServer.codes import *
 import sys
 import traceback
+from tornado import gen
 
 g_tcp_conns = set()
 g_conn_num = 2
@@ -41,6 +42,7 @@ class TCPClient(object):
         self.get_stream()
         self.stream.connect((self.host, self.port), self.on_connect)
 
+    @gen.coroutine
     def on_receive(self, data):
         if len(data.decode("utf-8").strip()) > 0:
             g_logger.info("Received: %s", data[:-1].decode("utf-8"))
@@ -53,7 +55,8 @@ class TCPClient(object):
                     g_logger.info(package.data)
                     dicJson = json.loads(szJson)
                     g_logger.info(szJson)
-                    self.do_bussiness(dicJson)
+                    szRet = yield self.do_bussiness(dicJson)
+                    self.send_message(szRet)
             except Exception,e:
                 g_logger.error(e)
                 traceback.print_exc()
@@ -78,6 +81,7 @@ class TCPClient(object):
     def set_shutdown(self):
         self.shutdown = True
 
+    @gen.coroutine
     def do_bussiness(self, dicJson):
         dicHeader = dicJson["httpInfo"]["header"]
         szUrl = dicJson["httpInfo"]["requrl"]
@@ -98,8 +102,9 @@ class TCPClient(object):
         package.sessionID = dicJson["sessionID"]
         package.data = base64.encodestring(szRet.encode("utf-8"))
 
+        raise gen.Return(obj2json(package))
         # g_logger.info("Return value to Server: %s" % (obj2json(package)))
-        self.send_message(obj2json(package))
+        # self.send_message(obj2json(package))
 
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")
