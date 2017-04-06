@@ -17,6 +17,7 @@ from models.TCPPackage import *
 from thinkutils.datetime.datetime_utils import *
 from codes import *
 from thinkutils.redis.think_redis import *
+from tornado import gen
 
 g_connections = set()
 
@@ -40,6 +41,7 @@ class TCPConnection(object):
         if None != callback:
             self._on_message_callback.add(callback)
 
+    @gen.coroutine
     def read_messages(self, data):
         try:
             package = json.loads(data[:-1])
@@ -52,7 +54,7 @@ class TCPConnection(object):
                 self.send_message(obj2json(package))
 
             if g_code_do_budiness_ret == package["code"]:
-                self.save_to_redis(package)
+                yield self.save_to_redis(package)
 
         except ValueError, e:
             g_logger.info("%s Not a valid package, pass!" % (data[:-1], ))
@@ -71,6 +73,7 @@ class TCPConnection(object):
     def on_close(self):
         g_connections.remove(self)
 
+    @gen.coroutine
     def save_to_redis(self, package):
         r = redis.StrictRedis(connection_pool=g_redis_pool)
         szKey = "actions_" + today()
@@ -79,7 +82,7 @@ class TCPConnection(object):
         dicRedis[package["actionID"]] = obj2json(package)
         r.hmset(szKey, dicRedis)
         # szVal = r.hmget(szKey, )
-        pass
+        # pass
 
 class CPATCPServer(TCPServer):
     @tornado.gen.coroutine
