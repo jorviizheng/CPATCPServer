@@ -124,7 +124,7 @@ class ParallelTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler
         self.rolloverAt = newRolloverAt
 
 def setup_custom_logger():
-    LOG_FILE = 'log/app.log'
+    LOG_FILE = 'log/cpa'
 
     formatter = logging.Formatter("[%(asctime)s] %(pathname)s %(funcName)s():%(lineno)d  %(levelname)s \t%(message)s")  # same as default
     # formatter = logging.Formatter('%(asctime)s [%(pathname)s: %(lineno)d] %(levelname)s %(message)s')

@@ -22,7 +22,6 @@ class PostToRemote(tornado.web.RequestHandler):
 
         self.write("Success")
 
-    @tornado.web.asynchronous
     @tornado.gen.coroutine
     def post(self):
         szBody = self.request.body
@@ -42,7 +41,7 @@ class PostToRemote(tornado.web.RequestHandler):
             # conn.add_on_message_callback(self.on_message())
             break
 
-        self.get_result_from_redis(package)
+        yield self.get_result_from_redis(package)
         # r = redis.StrictRedis(connection_pool=g_redis_pool)
         # szKey = "actions_" + today()
         # for i in range(60):
@@ -56,7 +55,6 @@ class PostToRemote(tornado.web.RequestHandler):
         #
         #     yield tornado.gen.sleep(0.5)
 
-    @tornado.web.asynchronous
     @tornado.gen.coroutine
     def get_result_from_redis(self, package):
         r = redis.StrictRedis(connection_pool=g_redis_pool)
