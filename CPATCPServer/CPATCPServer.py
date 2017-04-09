@@ -58,20 +58,25 @@ class TCPConnection(object):
             self._tunnel_client.write(data)
         # upstream.close()
 
-    def read_from_client(self, data):
-        g_logger.info("Send Message")
-        package = TCPPackage()
-        package.code = g_code_do_https
-        package.actionID = "000001"
-        package.sessionID = "1234567890"
-        package.data = base64.b64encode(data)
-        g_logger.info(package.data)
-        self.send_message(obj2json(package))
+
         # self.send_message(data)
 
-    def start_tunnel(self, client):
+    def start_tunnel(self, host, port, client):
+        def read_from_client(data):
+            g_logger.info("Send Message")
+            package = {}
+            package["code"] = g_code_do_https
+            package["actionID"] = "000001"
+            package["sessionID"] = "1234567890"
+            package["data"] = base64.b64encode(data)
+            package["host"] = host
+            package["port"] = port
+            g_logger.info(package["data"])
+
+            self.send_message(obj2json(package))
+
         self._tunnel_client = client
-        client.read_until_close(self.client_close, self.read_from_client)
+        client.read_until_close(self.client_close, read_from_client)
         # self.read_until_close(upstream_close, read_from_upstream)
         self._tunnel_client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
         self._tunnel_client = None

@@ -32,6 +32,8 @@ class TCPClient(object):
         self.shutdown = False
         self.stream = None
         self.sock_fd = None
+        self._upstream = None
+        self._https_dic = {}
         self._EOF = g_EOF
 
     def get_stream(self):
@@ -58,6 +60,11 @@ class TCPClient(object):
                     g_logger.info(szJson)
                     szRet = yield self.do_http(dicJson)
                     self.send_message(szRet)
+
+                if g_code_do_https == json_dict["code"]:
+                    self._https_dic[json_dict["actionID"]] = json_dict
+                    self.do_https(json_dict)
+
             except Exception,e:
                 g_logger.error(e)
                 traceback.print_exc()
@@ -82,6 +89,7 @@ class TCPClient(object):
     def set_shutdown(self):
         self.shutdown = True
 
+    # for do http
     @gen.coroutine
     def do_http(self, dicJson):
         dicHeader = dicJson["httpInfo"]["header"]
@@ -106,6 +114,36 @@ class TCPClient(object):
         raise gen.Return(obj2json(package))
         # g_logger.info("Return value to Server: %s" % (obj2json(package)))
         # self.send_message(obj2json(package))
+
+    # For do https
+    def do_https(self, dicJson):
+
+        def read_from_upstream(data):
+            g_logger.info(data)
+            self.send_message(data)
+            # package = TCPPackage()
+            # package.code = g_code_do_http_ret
+            # package.actionID = dicJson["actionID"]
+            # package.sessionID = dicJson["sessionID"]
+            # package.data = base64.encodestring(szRet.encode("utf-8"))
+            #
+            # raise gen.Return(obj2json(package))
+
+        def upstream_close(data=None):
+            if self.closed():
+                return
+            if data:
+                self.send_message(data)  # .write(data)
+                # client.close()
+
+        def start_tunnel():
+            g_logger.info("Do https for %s" % (dicJson["data"], ))
+            self._upstream.write(base64.b64decode(dicJson["data"]) + g_EOF)
+            self._upstream.read_until_close(upstream_close, read_from_upstream)
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+        self._upstream = tornado.iostream.IOStream(s)
+        self._upstream.connect((dicJson["host"], int(dicJson["port"])), start_tunnel)
 
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")

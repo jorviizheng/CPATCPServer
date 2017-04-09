@@ -120,7 +120,7 @@ class ProxyHandler(tornado.web.RequestHandler):
 
             upstream = conn.get_stream()
             # g_logger.info("start tunnel to %s" % (conn.get_address, ))
-            conn.start_tunnel(client)
+            conn.start_tunnel(host, port, client)
             # conn.add_on_message_callback(self.on_message())
             break
         # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
