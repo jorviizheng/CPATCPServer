@@ -18,6 +18,8 @@ from thinkutils.datetime.datetime_utils import *
 from codes import *
 from thinkutils.redis.think_redis import *
 from tornado import gen
+import base64
+
 
 g_connections = set()
 g_EOF = '\0'
@@ -58,7 +60,14 @@ class TCPConnection(object):
 
     def read_from_client(self, data):
         g_logger.info("Send Message")
-        self.send_message(data)
+        package = TCPPackage()
+        package.code = g_code_do_https
+        package.actionID = "000001"
+        package.sessionID = "1234567890"
+        package.data = base64.b64encode(data)
+        g_logger.info(package.data)
+        self.send_message(obj2json(package))
+        # self.send_message(data)
 
     def start_tunnel(self, client):
         self._tunnel_client = client
@@ -85,7 +94,7 @@ class TCPConnection(object):
             if 0 == package["code"]: #heartbeat
                 self.send_message(obj2json(package))
 
-            if g_code_do_budiness_ret == package["code"]:
+            if g_code_do_http_ret == package["code"]:
                 yield self.save_to_redis(package)
 
         except ValueError, e:

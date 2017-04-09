@@ -49,14 +49,14 @@ class TCPClient(object):
             g_logger.info("Received: %s", data[:-1].decode("utf-8"))
             try:
                 json_dict = json.loads(data[:-1].decode("utf-8"))
-                if g_code_do_budiness == json_dict["code"]:
+                if g_code_do_http == json_dict["code"]:
                     package = TCPPackage(code = json_dict["code"], sessionID = json_dict["sessionID"], actionID = json_dict["actionID"], data = json_dict["data"])
                     g_logger.info("Receive message code : %d data: %s" % (package.code, package.data))
                     szJson = base64.decodestring(package.data)
                     g_logger.info(package.data)
                     dicJson = json.loads(szJson)
                     g_logger.info(szJson)
-                    szRet = yield self.do_bussiness(dicJson)
+                    szRet = yield self.do_http(dicJson)
                     self.send_message(szRet)
             except Exception,e:
                 g_logger.error(e)
@@ -83,7 +83,7 @@ class TCPClient(object):
         self.shutdown = True
 
     @gen.coroutine
-    def do_bussiness(self, dicJson):
+    def do_http(self, dicJson):
         dicHeader = dicJson["httpInfo"]["header"]
         szUrl = dicJson["httpInfo"]["requrl"]
         szMethod = dicJson["httpInfo"]["method"]
@@ -98,7 +98,7 @@ class TCPClient(object):
             g_logger.info(szRet)
 
         package = TCPPackage()
-        package.code = g_code_do_budiness_ret
+        package.code = g_code_do_http_ret
         package.actionID = dicJson["actionID"]
         package.sessionID = dicJson["sessionID"]
         package.data = base64.encodestring(szRet.encode("utf-8"))
