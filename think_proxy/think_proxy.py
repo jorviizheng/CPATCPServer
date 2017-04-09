@@ -16,6 +16,7 @@ from utils import decrypt, encrypt
 from copy import deepcopy
 import settings
 from thinkutils.log.log import *
+from CPATCPServer.CPATCPServer import *
 
 __all__ = ['ProxyHandler', 'run_proxy']
 
@@ -81,7 +82,7 @@ class ProxyHandler(tornado.web.RequestHandler):
         client = self.request.connection.stream
 
         def read_from_client(data):
-            upstream.write(data)
+            upstream.write(data + g_EOF)
 
         def read_from_upstream(data):
             client.write(data)
@@ -105,9 +106,26 @@ class ProxyHandler(tornado.web.RequestHandler):
             upstream.read_until_close(upstream_close, read_from_upstream)
             client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
-        upstream = tornado.iostream.IOStream(s)
-        upstream.connect((host, int(port)), start_tunnel)
+        '''
+        1. get remote socket by random
+        2. write datas to remote
+        3. read response and write to client
+        '''
+        for conn in g_connections:
+            # package = TCPPackage()
+            # package.code = g_code_do_budiness
+            # package.actionID = dicJson["actionID"]
+            # package.sessionID = dicJson["sessionID"]
+            # package.data = base64.b64encode(szBody.encode("utf-8"))
+
+            upstream = conn.get_stream()
+            # g_logger.info("start tunnel to %s" % (conn.get_address, ))
+            conn.start_tunnel(client)
+            # conn.add_on_message_callback(self.on_message())
+            break
+        # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+        # upstream = tornado.iostream.IOStream(s)
+        # upstream.connect((host, int(port)), start_tunnel)
 
 
 def run_proxy(port, start_ioloop=False):

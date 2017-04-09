@@ -20,6 +20,7 @@ from thinkutils.redis.think_redis import *
 from tornado import gen
 
 g_connections = set()
+g_EOF = '\0'
 
 class TCPConnection(object):
     def __init__(self, stream, address):
@@ -28,18 +29,49 @@ class TCPConnection(object):
         self._address = address
         self._connect_time = get_timestamp()
         self._update_time = get_timestamp()
-        self._EOF = '\0'
+        self._EOF = g_EOF
+        self._tunnel_client = None
         self._stream.set_close_callback(self.on_close)
         self.on_message()
         self._on_message_callback = set()
         g_logger.info("A new user connected %s" % (address, ))
 
+    def get_stream(self):
+        return self._stream
+
+    def get_address(self):
+        return self._address
+
     def on_message(self):
         self._stream.read_until(self._EOF, self.read_messages)
 
     def add_on_message_callback(self, callback=None):
-        if None != callback:
+        if None is not callback:
             self._on_message_callback.add(callback)
+
+    def client_close(self, data=None):
+        if self.closed():
+            return
+        if data:
+            self._tunnel_client.write(data)
+        # upstream.close()
+
+    def read_from_client(self, data):
+        g_logger.info("Send Message")
+        self.send_message(data)
+
+    def start_tunnel(self, client):
+        self._tunnel_client = client
+        client.read_until_close(self.client_close, self.read_from_client)
+        # self.read_until_close(upstream_close, read_from_upstream)
+        self._tunnel_client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
+        self._tunnel_client = None
+
+    def is_tunneling(self):
+        if self._tunnel_client is None:
+            return False
+        else:
+            return True
 
     @gen.coroutine
     def read_messages(self, data):

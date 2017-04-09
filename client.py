@@ -16,6 +16,7 @@ from threading import Timer
 import requests
 import base64
 from CPATCPServer.codes import *
+from CPATCPServer.CPATCPServer import *
 import sys
 import traceback
 from tornado import gen
@@ -31,7 +32,7 @@ class TCPClient(object):
         self.shutdown = False
         self.stream = None
         self.sock_fd = None
-        self._EOF = '\0'
+        self._EOF = g_EOF
 
     def get_stream(self):
         self.sock_fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
