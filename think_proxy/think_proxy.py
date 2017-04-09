@@ -15,6 +15,7 @@ import tornado.httpclient
 from utils import decrypt, encrypt
 from copy import deepcopy
 import settings
+from thinkutils.log.log import *
 
 __all__ = ['ProxyHandler', 'run_proxy']
 
@@ -76,6 +77,7 @@ class ProxyHandler(tornado.web.RequestHandler):
     def connect(self):
         # 当时ssl时会调用connect
         host, port = self.request.uri.split(':')
+        g_logger.info("Connect to %s:%s" % (host, port))
         client = self.request.connection.stream
 
         def read_from_client(data):
@@ -108,7 +110,7 @@ class ProxyHandler(tornado.web.RequestHandler):
         upstream.connect((host, int(port)), start_tunnel)
 
 
-def run_proxy(port, start_ioloop=True):
+def run_proxy(port, start_ioloop=False):
     """
     Run proxy on the specified port. If start_ioloop is True (default),
     the tornado IOLoop will be started immediately.
