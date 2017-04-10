@@ -64,7 +64,10 @@ class TCPConnection(object):
 
             if g_code_do_https_ret == package["code"]:
                 g_logger.info("Write to client %s" % (package["data"], ))
-                self.write_https_stream_to_client(base64.b64decode(package["data"]))
+                try:
+                    self.write_https_stream_to_client(base64.b64decode(package["data"]))
+                except socket.error, msg:
+                    g_logger.error("Exception: %s" % (msg, ))
 
             if g_code_do_https_close == package["code"]:
                 g_logger.info("Remote Server closed")
@@ -98,6 +101,7 @@ class TCPConnection(object):
         # pass
 
     def do_https(self, client, host, port, actionID):
+        g_logger.info("Start https proxy")
         def client_close(data=None):
             g_logger.info("FXXK")
 
@@ -122,7 +126,11 @@ class TCPConnection(object):
 
     def write_https_stream_to_client(self, data):
         if self._client is not None:
-            self._client.write(data)
+            try:
+                self._client.write(data)
+            except socket.error, msg:
+                g_logger.error("Exception: %s" % (msg,))
+                self._client = None
 
 class CPATCPServer(TCPServer):
     @tornado.gen.coroutine

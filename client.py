@@ -26,23 +26,23 @@ g_conn_num = 2
 
 class TCPClient(object):
     def __init__(self, host, port, io_loop=None):
-        self.host = host
-        self.port = port
-        self.io_loop = io_loop
-        self.shutdown = False
-        self.stream = None
-        self.sock_fd = None
-        self._connHttps = {}
-        self._EOF = EOF
+        self.__host = host
+        self.__port = port
+        self.__io_loop = io_loop
+        self.__shutdown = False
+        self.__stream = None
+        self.__sock_fd = None
+        self.__connHttps = {}
+        self.__EOF = EOF
 
     def get_stream(self):
-        self.sock_fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
-        self.stream = tornado.iostream.IOStream(self.sock_fd)
-        self.stream.set_close_callback(self.on_close)
+        self.__sock_fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+        self.__stream = tornado.iostream.IOStream(self.__sock_fd)
+        self.__stream.set_close_callback(self.on_close)
 
     def connect(self):
         self.get_stream()
-        self.stream.connect((self.host, self.port), self.on_connect)
+        self.__stream.connect((self.__host, self.__port), self.on_connect)
 
     @gen.coroutine
     def on_receive(self, data):
@@ -68,23 +68,23 @@ class TCPClient(object):
                 pass
             finally:
                 pass
-        self.stream.read_until(self._EOF, self.on_receive)
+        self.__stream.read_until(self.__EOF, self.on_receive)
 
     def on_close(self):
-        if self.shutdown:
-            self.io_loop.stop()
+        if self.__shutdown:
+            self.__io_loop.stop()
 
     def on_connect(self):
         g_logger.info("Connected")
         g_tcp_conns.add(self)
-        self.stream.read_until(self._EOF, self.on_receive)
+        self.__stream.read_until(self.__EOF, self.on_receive)
 
     def send_message(self, szMsg):
         g_logger.info("Send message: %s" % (szMsg, ))
-        self.stream.write(szMsg + self._EOF)
+        self.__stream.write(szMsg + self.__EOF)
 
     def set_shutdown(self):
-        self.shutdown = True
+        self.__shutdown = True
 
     @gen.coroutine
     def do_http(self, dicJson):
@@ -136,6 +136,8 @@ class TCPClient(object):
             packageClose["actionID"] = dicJson["actionID"]
             self.send_message(obj2json(packageClose))
 
+            del self.__connHttps[dicJson["actionID"]]
+
         def start_tunnel():
             # client.read_until_close(client_close, read_from_client)
             # upstream.read_until_close(upstream_close, read_from_upstream)
@@ -146,16 +148,16 @@ class TCPClient(object):
             upstream.read_until_close(upstream_close, read_from_upstream)
 
 
-        if dicJson["actionID"] in self._connHttps.keys():
+        if dicJson["actionID"] in self.__connHttps.keys():
             # send data to real server
             g_logger.info("FXXK")
-            upstream = self._connHttps[dicJson["actionID"]]
+            upstream = self.__connHttps[dicJson["actionID"]]
             g_logger.info("Write to remote server %s" % (dicJson["data"],))
             upstream.write(base64.b64decode(dicJson["data"]))
         else:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
             upstream = tornado.iostream.IOStream(s)
-            self._connHttps[dicJson["actionID"]] = upstream
+            self.__connHttps[dicJson["actionID"]] = upstream
 
             g_logger.info("%s ==> %s" % (dicJson["host"], dicJson["port"]))
             upstream.connect((dicJson["host"], int(dicJson["port"])), start_tunnel)

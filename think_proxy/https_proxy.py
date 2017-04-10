@@ -86,6 +86,7 @@ class ProxyHandler(tornado.web.RequestHandler):
 
         actionID = get_timestamp()
         if USE_REMOTE_CLIENT:
+            g_logger.info("FXXK")
             upConn.do_https(client, host, port, actionID)
             pass
         else:
