@@ -11,9 +11,10 @@ import tornado.ioloop
 import tornado.iostream
 import tornado.web
 import tornado.httpclient
-
+from thinkutils.log.log import *
 from utils import decrypt, encrypt
 from copy import deepcopy
+import base64
 
 # __all__ = ['ProxyHandler', 'run_proxy']
 
@@ -36,12 +37,15 @@ class ProxyHandler(tornado.web.RequestHandler):
         client = self.request.connection.stream
 
         def read_from_client(data):
+            g_logger.info("%s" % (base64.b64encode(data)))
             upstream.write(data)
 
         def read_from_upstream(data):
+            g_logger.info("%s" % (base64.b64encode(data)))
             client.write(data)
 
         def client_close(data=None):
+            g_logger.info("FXXK")
             if upstream.closed():
                 return
             if data:
@@ -49,6 +53,7 @@ class ProxyHandler(tornado.web.RequestHandler):
             upstream.close()
 
         def upstream_close(data=None):
+            g_logger.info("FXXK")
             if client.closed():
                 return
             if data:
