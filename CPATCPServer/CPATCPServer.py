@@ -125,7 +125,7 @@ class TCPConnection(object):
         start_tunnel()
 
     def write_https_stream_to_client(self, data):
-        if self.__client is not None:
+        if self.__client is not None and False == self.__client.closed():
             try:
                 self.__client.write(data)
             except socket.error, msg:
