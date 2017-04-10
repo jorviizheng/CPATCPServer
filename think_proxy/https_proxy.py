@@ -20,7 +20,7 @@ from CPATCPServer.CPATCPServer import *
 
 # __all__ = ['ProxyHandler', 'run_proxy']
 
-USE_REMOTE_CLIENT = False
+USE_REMOTE_CLIENT = True
 
 class ProxyHandler(tornado.web.RequestHandler):
     SUPPORTED_METHODS = ['GET', 'POST', 'CONNECT']
@@ -36,12 +36,6 @@ class ProxyHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def connect(self):
         # 当时ssl时会调用connect
-        host, port = self.request.uri.split(':')
-        client = self.request.connection.stream
-
-        for conn in g_connections:
-            upstream1 = conn.get_stream()
-            break
 
         def read_from_client(data):
             g_logger.info("%s" % (base64.b64encode(data)))
@@ -56,8 +50,6 @@ class ProxyHandler(tornado.web.RequestHandler):
                 upstream1.write(obj2json(package) + EOF)
             else:
                 upstream.write(data)
-
-
 
         def read_from_upstream(data):
             g_logger.info("%s" % (base64.b64encode(data)))
@@ -84,10 +76,22 @@ class ProxyHandler(tornado.web.RequestHandler):
             upstream.read_until_close(upstream_close, read_from_upstream)
             client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
-        upstream = tornado.iostream.IOStream(s)
+        host, port = self.request.uri.split(':')
+        client = self.request.connection.stream
+
+        for conn in g_connections:
+            upConn = conn
+            upstream1 = conn.get_stream()
+            break
+
         actionID = get_timestamp()
-        upstream.connect((host, int(port)), start_tunnel)
+        if USE_REMOTE_CLIENT:
+            upConn.do_https(client, host, port, actionID)
+            pass
+        else:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+            upstream = tornado.iostream.IOStream(s)
+            upstream.connect((host, int(port)), start_tunnel)
 
 
 def run_https_proxy(port, start_ioloop=False):

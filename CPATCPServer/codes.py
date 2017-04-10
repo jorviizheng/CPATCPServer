@@ -6,3 +6,4 @@ g_code_do_http_ret = 1002
 
 g_code_do_https = 1003
 g_code_do_https_ret = 1004
+g_code_do_https_close = 1005

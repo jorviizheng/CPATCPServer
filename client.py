@@ -113,30 +113,28 @@ class TCPClient(object):
 
     def do_https(self, dicJson):
         g_logger.info("FXXK")
-        # host = "www.baidu.com"
-        # port = "443"
-
-        def read_from_client(data):
-            g_logger.info("%s" % (base64.b64encode(data)))
-            upstream.write(data)
-
-            package = {}
-            package["code"] = g_code_do_https
-            package["data"] = base64.b64encode(data)
 
         def read_from_upstream(data):
             g_logger.info("%s" % (base64.b64encode(data)))
-
-        def client_close(data=None):
-            g_logger.info("FXXK")
-            if upstream.closed():
-                return
-            if data:
-                upstream.write(data)
-            upstream.close()
+            package = {}
+            package["code"] = g_code_do_https_ret
+            package["actionID"] = dicJson["actionID"]
+            package["data"] = base64.b64encode(data)
+            self.send_message(obj2json(package))
 
         def upstream_close(data=None):
-            pass
+            g_logger.info("Remote Server Closed")
+            if data is not None:
+                package = {}
+                package["code"] = g_code_do_https_ret
+                package["actionID"] = dicJson["actionID"]
+                package["data"] = base64.b64encode(data)
+                self.send_message(obj2json(package))
+
+            packageClose = {}
+            packageClose["code"] = g_code_do_https_close
+            packageClose["actionID"] = dicJson["actionID"]
+            self.send_message(obj2json(packageClose))
 
         def start_tunnel():
             # client.read_until_close(client_close, read_from_client)
