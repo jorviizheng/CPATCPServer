@@ -113,8 +113,8 @@ class TCPClient(object):
 
     def do_https(self, dicJson):
         g_logger.info("FXXK")
-        host = "www.baidu.com"
-        port = "443"
+        # host = "www.baidu.com"
+        # port = "443"
 
         def read_from_client(data):
             g_logger.info("%s" % (base64.b64encode(data)))
@@ -142,20 +142,26 @@ class TCPClient(object):
             # client.read_until_close(client_close, read_from_client)
             # upstream.read_until_close(upstream_close, read_from_upstream)
             # client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
+            g_logger.info("Write to remote server %s" % (dicJson["data"],))
+
             upstream.write(base64.b64decode(dicJson["data"]))
             upstream.read_until_close(upstream_close, read_from_upstream)
 
 
-        if self._connHttps[dicJson["actionID"]] is None:
+        if dicJson["actionID"] in self._connHttps.keys():
+            # send data to real server
+            g_logger.info("FXXK")
+            upstream = self._connHttps[dicJson["actionID"]]
+            g_logger.info("Write to remote server %s" % (dicJson["data"],))
+            upstream.write(base64.b64decode(dicJson["data"]))
+        else:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
             upstream = tornado.iostream.IOStream(s)
             self._connHttps[dicJson["actionID"]] = upstream
 
-            upstream.connect((host, int(port)), start_tunnel)
-        else:
-            #send data to real server
-            upstream = self._connHttps[dicJson["actionID"]]
-            upstream.write(base64.b64decode(dicJson["data"]))
+            g_logger.info("%s ==> %s" % (dicJson["host"], dicJson["port"]))
+            upstream.connect((dicJson["host"], int(dicJson["port"])), start_tunnel)
+
 
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")

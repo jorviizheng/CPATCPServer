@@ -20,6 +20,7 @@ from CPATCPServer.CPATCPServer import *
 
 # __all__ = ['ProxyHandler', 'run_proxy']
 
+USE_REMOTE_CLIENT = False
 
 class ProxyHandler(tornado.web.RequestHandler):
     SUPPORTED_METHODS = ['GET', 'POST', 'CONNECT']
@@ -44,14 +45,19 @@ class ProxyHandler(tornado.web.RequestHandler):
 
         def read_from_client(data):
             g_logger.info("%s" % (base64.b64encode(data)))
-            upstream.write(data)
+            if USE_REMOTE_CLIENT:
+                package = {}
+                package["code"] = g_code_do_https
+                package["host"] = host
+                package["port"] = port
+                package["data"] = base64.b64encode(data)
+                package["actionID"] = actionID
 
-            package = {}
-            package["code"] = g_code_do_https
-            package["data"] = base64.b64encode(data)
-            package["actionID"] = actionID
+                upstream1.write(obj2json(package) + EOF)
+            else:
+                upstream.write(data)
 
-            upstream1.write(obj2json(package) + EOF)
+
 
         def read_from_upstream(data):
             g_logger.info("%s" % (base64.b64encode(data)))
