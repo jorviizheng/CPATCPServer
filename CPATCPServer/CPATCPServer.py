@@ -114,9 +114,10 @@ class TCPConnection(object):
             # client.read_until_close(client_close, read_from_client)
 
         def start_tunnel():
-            client.read_until_close(client_close, read_from_client)
-            client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
+            self._client.read_until_close(client_close, read_from_client)
+            self._client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
 
+        self._client = client
         start_tunnel()
 
     def write_https_stream_to_client(self, data):
