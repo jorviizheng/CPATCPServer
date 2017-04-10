@@ -111,16 +111,12 @@ class TCPConnection(object):
             package["actionID"] = actionID
 
             self.send_message(obj2json(package))
-            # upstream1.write(obj2json(package) + EOF)
 
         def upstream_close(data=None):
             g_logger.info("FXXK")
 
         def start_tunnel():
             client.read_until_close(client_close, read_from_client)
-
-            # read from onMessage
-            # upstream.read_until_close(upstream_close, read_from_upstream)
             client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
 
         start_tunnel()
