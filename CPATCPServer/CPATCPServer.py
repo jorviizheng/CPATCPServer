@@ -26,26 +26,26 @@ EOF = '\0'
 class TCPConnection(object):
     def __init__(self, stream, address):
         g_connections.add(self)
-        self._stream = stream
-        self._address = address
-        self._connect_time = get_timestamp()
-        self._update_time = get_timestamp()
-        self._EOF = EOF
-        self._stream.set_close_callback(self.on_close)
+        self.__stream = stream
+        self.__address = address
+        self.__connect_time = get_timestamp()
+        self.__update_time = get_timestamp()
+        self.__EOF = EOF
+        self.__stream.set_close_callback(self.on_close)
         self.on_message()
-        self._on_message_callback = set()
-        self._client = None
+        self.__on_message_callback = set()
+        self.__client = None
         g_logger.info("A new user connected %s" % (address, ))
 
     def on_message(self):
-        self._stream.read_until(self._EOF, self.read_messages)
+        self.__stream.read_until(self.__EOF, self.read_messages)
 
     def add_on_message_callback(self, callback=None):
         if None != callback:
-            self._on_message_callback.add(callback)
+            self.__on_message_callback.add(callback)
 
     def get_stream(self):
-        return self._stream
+        return self.__stream
 
     @gen.coroutine
     def read_messages(self, data):
@@ -80,7 +80,7 @@ class TCPConnection(object):
 
     def send_message(self, data):
         try:
-            self._stream.write(data + self._EOF)
+            self.__stream.write(data + self.__EOF)
         except:
             pass
         finally:
@@ -118,19 +118,19 @@ class TCPConnection(object):
             # client.read_until_close(client_close, read_from_client)
 
         def start_tunnel():
-            self._client.read_until_close(client_close, read_from_client)
-            self._client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
+            self.__client.read_until_close(client_close, read_from_client)
+            self.__client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
 
-        self._client = client
+        self.__client = client
         start_tunnel()
 
     def write_https_stream_to_client(self, data):
-        if self._client is not None:
+        if self.__client is not None:
             try:
-                self._client.write(data)
+                self.__client.write(data)
             except socket.error, msg:
                 g_logger.error("Exception: %s" % (msg,))
-                self._client = None
+                self.__client = None
 
 class CPATCPServer(TCPServer):
     @tornado.gen.coroutine
