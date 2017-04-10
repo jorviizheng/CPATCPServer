@@ -24,9 +24,11 @@ from tornado.options import define, options
 from CPATCPServer.CPATCPServer import *
 from controller.broadcast import *
 from controller.PostToRemote import *
+from think_proxy.https_proxy import *
 
 define('tcp_port', default=9001)
 define('http_port', default=9002)
+define('https_port', default=9003)
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -42,6 +44,9 @@ def main():
     # http server
     http_server = HTTPServer(application)
     http_server.listen(options.http_port)
+
+    #for https proxy
+    run_https_proxy(options.https_port)
 
     # tcp server
     server = CPATCPServer()
