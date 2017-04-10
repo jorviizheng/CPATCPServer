@@ -19,6 +19,7 @@ from CPATCPServer.codes import *
 import sys
 import traceback
 from tornado import gen
+from CPATCPServer.CPATCPServer import *
 
 g_tcp_conns = set()
 g_conn_num = 2
@@ -31,7 +32,8 @@ class TCPClient(object):
         self.shutdown = False
         self.stream = None
         self.sock_fd = None
-        self._EOF = '\0'
+        self._connHttps = {}
+        self._EOF = EOF
 
     def get_stream(self):
         self.sock_fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
@@ -48,15 +50,18 @@ class TCPClient(object):
             g_logger.info("Received: %s", data[:-1].decode("utf-8"))
             try:
                 json_dict = json.loads(data[:-1].decode("utf-8"))
-                if g_code_do_budiness == json_dict["code"]:
+                if g_code_do_http == json_dict["code"]:
                     package = TCPPackage(code = json_dict["code"], sessionID = json_dict["sessionID"], actionID = json_dict["actionID"], data = json_dict["data"])
                     g_logger.info("Receive message code : %d data: %s" % (package.code, package.data))
                     szJson = base64.decodestring(package.data)
                     g_logger.info(package.data)
                     dicJson = json.loads(szJson)
                     g_logger.info(szJson)
-                    szRet = yield self.do_bussiness(dicJson)
+                    szRet = yield self.do_http(dicJson)
                     self.send_message(szRet)
+
+                if g_code_do_https == json_dict["code"]:
+                    self.do_https(json_dict);
             except Exception,e:
                 g_logger.error(e)
                 traceback.print_exc()
@@ -82,7 +87,7 @@ class TCPClient(object):
         self.shutdown = True
 
     @gen.coroutine
-    def do_bussiness(self, dicJson):
+    def do_http(self, dicJson):
         dicHeader = dicJson["httpInfo"]["header"]
         szUrl = dicJson["httpInfo"]["requrl"]
         szMethod = dicJson["httpInfo"]["method"]
@@ -97,7 +102,7 @@ class TCPClient(object):
             g_logger.info(szRet)
 
         package = TCPPackage()
-        package.code = g_code_do_budiness_ret
+        package.code = g_code_do_http_ret
         package.actionID = dicJson["actionID"]
         package.sessionID = dicJson["sessionID"]
         package.data = base64.encodestring(szRet.encode("utf-8"))
@@ -105,6 +110,52 @@ class TCPClient(object):
         raise gen.Return(obj2json(package))
         # g_logger.info("Return value to Server: %s" % (obj2json(package)))
         # self.send_message(obj2json(package))
+
+    def do_https(self, dicJson):
+        g_logger.info("FXXK")
+        host = "www.baidu.com"
+        port = "443"
+
+        def read_from_client(data):
+            g_logger.info("%s" % (base64.b64encode(data)))
+            upstream.write(data)
+
+            package = {}
+            package["code"] = g_code_do_https
+            package["data"] = base64.b64encode(data)
+
+        def read_from_upstream(data):
+            g_logger.info("%s" % (base64.b64encode(data)))
+
+        def client_close(data=None):
+            g_logger.info("FXXK")
+            if upstream.closed():
+                return
+            if data:
+                upstream.write(data)
+            upstream.close()
+
+        def upstream_close(data=None):
+            pass
+
+        def start_tunnel():
+            # client.read_until_close(client_close, read_from_client)
+            # upstream.read_until_close(upstream_close, read_from_upstream)
+            # client.write(b'HTTP/1.0 200 Connection established\r\n\r\n')
+            upstream.write(base64.b64decode(dicJson["data"]))
+            upstream.read_until_close(upstream_close, read_from_upstream)
+
+
+        if self._connHttps[dicJson["actionID"]] is None:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+            upstream = tornado.iostream.IOStream(s)
+            self._connHttps[dicJson["actionID"]] = upstream
+
+            upstream.connect((host, int(port)), start_tunnel)
+        else:
+            #send data to real server
+            upstream = self._connHttps[dicJson["actionID"]]
+            upstream.write(base64.b64decode(dicJson["data"]))
 
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")

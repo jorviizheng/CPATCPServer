@@ -15,6 +15,8 @@ from thinkutils.log.log import *
 from utils import decrypt, encrypt
 from copy import deepcopy
 import base64
+from CPATCPServer.CPATCPServer import *
+
 
 # __all__ = ['ProxyHandler', 'run_proxy']
 
@@ -36,9 +38,20 @@ class ProxyHandler(tornado.web.RequestHandler):
         host, port = self.request.uri.split(':')
         client = self.request.connection.stream
 
+        for conn in g_connections:
+            upstream1 = conn.get_stream()
+            break
+
         def read_from_client(data):
             g_logger.info("%s" % (base64.b64encode(data)))
             upstream.write(data)
+
+            package = {}
+            package["code"] = g_code_do_https
+            package["data"] = base64.b64encode(data)
+            package["actionID"] = actionID
+
+            upstream1.write(obj2json(package) + EOF)
 
         def read_from_upstream(data):
             g_logger.info("%s" % (base64.b64encode(data)))
@@ -67,6 +80,7 @@ class ProxyHandler(tornado.web.RequestHandler):
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
         upstream = tornado.iostream.IOStream(s)
+        actionID = get_timestamp()
         upstream.connect((host, int(port)), start_tunnel)
 
 

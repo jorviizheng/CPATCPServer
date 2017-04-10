@@ -20,6 +20,7 @@ from thinkutils.redis.think_redis import *
 from tornado import gen
 
 g_connections = set()
+EOF = '\0'
 
 class TCPConnection(object):
     def __init__(self, stream, address):
@@ -28,7 +29,7 @@ class TCPConnection(object):
         self._address = address
         self._connect_time = get_timestamp()
         self._update_time = get_timestamp()
-        self._EOF = '\0'
+        self._EOF = EOF
         self._stream.set_close_callback(self.on_close)
         self.on_message()
         self._on_message_callback = set()
@@ -40,6 +41,9 @@ class TCPConnection(object):
     def add_on_message_callback(self, callback=None):
         if None != callback:
             self._on_message_callback.add(callback)
+
+    def get_stream(self):
+        return self._stream
 
     @gen.coroutine
     def read_messages(self, data):
@@ -53,7 +57,7 @@ class TCPConnection(object):
             if 0 == package["code"]: #heartbeat
                 self.send_message(obj2json(package))
 
-            if g_code_do_budiness_ret == package["code"]:
+            if g_code_do_http_ret == package["code"]:
                 yield self.save_to_redis(package)
 
         except ValueError, e:

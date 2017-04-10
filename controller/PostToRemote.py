@@ -32,7 +32,7 @@ class PostToRemote(tornado.web.RequestHandler):
 
         for conn in g_connections:
             package = TCPPackage()
-            package.code = g_code_do_budiness
+            package.code = g_code_do_http
             package.actionID = dicJson["actionID"]
             package.sessionID = dicJson["sessionID"]
             package.data = base64.b64encode(szBody.encode("utf-8"))
