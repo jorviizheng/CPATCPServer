@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""部署在本地"""
+"""
+https tunnel for cpa
+when receive a connect from client
+start a tunnel from client to remote device
+"""
 
 import sys
 import socket
