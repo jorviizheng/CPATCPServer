@@ -25,6 +25,7 @@ from CPATCPServer.CPATCPServer import *
 from controller.broadcast import *
 from controller.PostToRemote import *
 from think_proxy.https_proxy import *
+from controller.Session import *
 
 define('tcp_port', default=9001)
 define('http_port', default=9002)
@@ -38,6 +39,7 @@ application = Application([
     (r'/', MainHandler),
     (r'/broadcast', Broadcast),
     (r'/post_to_remote', PostToRemote),
+    (r'/get_session', Session),
 ])
 
 def main():
