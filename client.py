@@ -166,7 +166,7 @@ class TCPClient(object):
 def heartbeat_worker():
     # g_logger.info("Send heartbeat")
     while True:
-        time.sleep(30) #5 min for heartbeat
+        time.sleep(10) #5 min for heartbeat
         for conn in g_tcp_conns:
             try:
                 heartbeat = TCPPackage()
