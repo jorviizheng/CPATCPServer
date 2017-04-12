@@ -187,11 +187,10 @@ class HeartListener(Listener):
     @add_event(HeartBeatEvent)
     def on_heartbeat(self, event=None):
         g_logger.info("Event %d" % (event.code, ))
+        tornado.ioloop.IOLoop.instance().call_later(1, testFunc)
 
-# class MyListener(Listener):
-#     @add_event(GreetEvent)
-#     def greet(self,event=None):
-#         print 'hello',event.name
+def testFunc():
+    g_logger.info("FXXXK")
 
 g_EventBus = EventBus()
 
