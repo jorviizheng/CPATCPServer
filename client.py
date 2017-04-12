@@ -20,6 +20,9 @@ import sys
 import traceback
 from tornado import gen
 from CPATCPServer.CPATCPServer import *
+from thinkutils.eventbus.listener import *
+from event.HeartbeatEvent import *
+from thinkutils.eventbus.eventbus import *
 
 g_tcp_conns = set()
 g_conn_num = 2
@@ -172,12 +175,31 @@ def heartbeat_worker():
                 heartbeat = TCPPackage()
                 # heartbeat.data = "你好"
                 conn.send_message(obj2json(heartbeat))
+
+                event = HeartBeatEvent()
+                g_EventBus.post(event)
             except Exception:
                 pass
             finally:
                 pass
 
+class HeartListener(Listener):
+    @add_event(HeartBeatEvent)
+    def on_heartbeat(self, event=None):
+        g_logger.info("Event %d" % (event.code, ))
+
+# class MyListener(Listener):
+#     @add_event(GreetEvent)
+#     def greet(self,event=None):
+#         print 'hello',event.name
+
+g_EventBus = EventBus()
+
 def main():
+    #init EventBus
+    g_EventBus.register(HeartListener())
+
+    #init tornado
     io_loop = tornado.ioloop.IOLoop.instance()
 
     for i in range(g_conn_num):
