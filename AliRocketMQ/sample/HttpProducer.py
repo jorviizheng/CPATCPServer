@@ -39,7 +39,7 @@ class HttpProducer(object):
         """Producer ID"""
         pid = self.cf.get("property","ProducerID")
         """HTTP请求主体内容"""
-        content = U"中文".encode('utf-8')
+        content = U"helloworld".encode('utf-8')
         """分隔符"""
         newline = "\n"
         """获取URL域名地址"""
@@ -74,6 +74,7 @@ class HttpProducer(object):
                 """读取HTTP应答内容"""
                 msg = response.read()
                 print "response:"+msg
+                time.sleep(1)
         except Exception,e:
             print e
         finally:

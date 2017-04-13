@@ -7,6 +7,7 @@ from urlparse import urlparse
 from Util import parseURL,calSignature
 
 from thinkutils.log.log import *
+from thinkutils.common_utils.object2json import *
 """
 消息订阅者
 """
@@ -71,8 +72,10 @@ class HttpConsumer(object):
                 """将实际的消费消息进行解码"""
                 messages = json.loads(msg)
                 if len(messages) == 0:
-                    time.sleep(2)
+                    time.sleep(0.1)
                     continue
+                else:
+                    g_logger.info(msg)
 
                 """依次获取每条消费消息"""
                 for message in messages:
