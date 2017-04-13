@@ -186,10 +186,11 @@ def heartbeat_worker():
 class HeartListener(Listener):
     @add_event(HeartBeatEvent)
     def on_heartbeat(self, event=None):
-        g_logger.info("Event %d" % (event.code, ))
-        tornado.ioloop.IOLoop.instance().call_later(1, testFunc)
+        # g_logger.info("Event %d" % (event.code, ))
+        tornado.ioloop.IOLoop.instance().call_later(1, check_connections)
 
-def testFunc():
+def check_connections():
+    # check connection to Server after heartbeat
     g_logger.info("FXXXK")
 
 g_EventBus = EventBus()
