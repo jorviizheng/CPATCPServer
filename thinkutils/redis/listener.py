@@ -1,9 +1,9 @@
 # coding=utf-8
-import redis
-from thinkutils.common_utils.ThreadPool import *
-from thinkutils.redis.think_redis import *
-# from abc import ABCMeta
 from abc import *
+
+from thinkutils.redis.think_redis import *
+from thinkutils.thread.ThreadPool import *
+
 
 class Listener(object):
 
