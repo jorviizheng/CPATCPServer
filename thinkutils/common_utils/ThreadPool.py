@@ -1,5 +1,6 @@
 import threading
 from Queue import Queue, Empty
+import time
 
 RUNNING = 1
 STOPPED = 0
@@ -28,6 +29,7 @@ class ThreadWorker(threading.Thread):
             try:
                 job, args, kwargs = self.pool.jobs.get(block=False)
             except Empty:
+                time.sleep(2)
                 continue
             else:
                 # do job
