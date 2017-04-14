@@ -72,6 +72,15 @@ class MyMQ(RedisMQListener):
     def on_message(self, item):
         print (item)
 
+
+def post_to_mq(szQueue, szItem):
+    r = redis.StrictRedis(connection_pool=g_redis_pool)
+    r.rpush(szQueue, szItem)
+
+def publish(szChannel, szMsg):
+    r = redis.StrictRedis(connection_pool=g_redis_pool)
+    r.publish(szChannel, szMsg)
+
 '''
 For test redis MQ
 '''
@@ -84,9 +93,9 @@ For test redis MQ
 '''
 For test redis Pub/Sub
 '''
-if __name__ == "__main__":
-    r = redis.StrictRedis(connection_pool=g_redis_pool)
-    client = MyListener(r, ['channel1', 'fxxk'])
-    # for i in range(10):
-    #     r.publish("channel1", i)
-    client.run()
+# if __name__ == "__main__":
+#     r = redis.StrictRedis(connection_pool=g_redis_pool)
+#     client = MyListener(r, ['channel1', 'fxxk'])
+#     # for i in range(10):
+#     #     r.publish("channel1", i)
+#     client.run()
