@@ -6,11 +6,12 @@ from thinkutils.thread.ThreadPool import *
 from threading import Thread
 
 
-class PubSubListener(object):
+class PubSubListener(Thread):
 
     __metaclass__ = ABCMeta
 
     def __init__(self, redis_conn, channels):
+        super(PubSubListener, self).__init__()
         self.redis_conn = redis_conn
         self.pubsub = self.redis_conn.pubsub()
         self.pubsub.subscribe(channels)
@@ -83,9 +84,9 @@ For test redis MQ
 '''
 For test redis Pub/Sub
 '''
-# if __name__ == "__main__":
-#     r = redis.StrictRedis(connection_pool=g_redis_pool)
-#     client = MyListener(r, ['channel1', 'fxxk'])
-#     # for i in range(10):
-#     #     r.publish("channel1", i)
-#     client.run()
+if __name__ == "__main__":
+    r = redis.StrictRedis(connection_pool=g_redis_pool)
+    client = MyListener(r, ['channel1', 'fxxk'])
+    # for i in range(10):
+    #     r.publish("channel1", i)
+    client.run()
