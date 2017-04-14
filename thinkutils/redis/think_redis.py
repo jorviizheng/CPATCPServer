@@ -1,13 +1,9 @@
 #!/usr/bin/python
 #coding=utf-8
 
-import os
-import sys
-
 import redis
 
-from thinkutils.common_utils.Singleton import *
-from Config import *
+from thinkutils.config.Config import *
 
 class ThinkRedisPool(object):
     def __init__(self):

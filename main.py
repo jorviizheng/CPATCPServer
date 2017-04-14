@@ -1,34 +1,15 @@
 #!/usr/bin/python
 #coding=utf-8
 
-import os
-import sys
-import requests
-import redis
-
-from thinkutils.common_utils.think_hashlib import *
-from thinkutils.datetime.datetime_utils import *
-from thinkutils.log.log import *
-from thinkutils.ffan.ffan import *
-from thinkutils.redis.think_redis import *
 import tornado.gen
 import tornado.ioloop
 import tornado.web
-from tornado.iostream import StreamClosedError
-from tornado.tcpserver import TCPServer
-from tornado.httpserver import HTTPServer
-from tornado.websocket import WebSocketHandler
-from tornado.web import Application, RequestHandler
-from tornado.ioloop import IOLoop
-from tornado.options import define, options
+
 from CPATCPServer.CPATCPServer import *
-from controller.broadcast import *
 from controller.PostToRemote import *
-from think_proxy.https_proxy import *
 from controller.Session import *
-from thinkutils.redis.think_redis import *
-from thinkutils.redis.listener import *
-from Config import *
+from controller.broadcast import *
+from think_proxy.https_proxy import *
 
 define('tcp_port', default=9001)
 define('http_port', default=9002)

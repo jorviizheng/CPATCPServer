@@ -1,11 +1,7 @@
-import sys
-import os
-
 import MySQLdb
 from DBUtils.PooledDB import PooledDB
-import hashlib
-import time
-from Config import *
+
+from thinkutils.config.Config import *
 
 g_dbPool = PooledDB(MySQLdb
                     , 5
