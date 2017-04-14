@@ -7,6 +7,7 @@ import sys
 import redis
 
 from thinkutils.common_utils.Singleton import *
+from Config import *
 
 class ThinkRedisPool(object):
     def __init__(self):
@@ -31,4 +32,6 @@ class ThinkRedisPool(object):
         return _connection_pool
 
 
-g_redis_pool = ThinkRedisPool.get_connection_pool(host='thinkman-wang.com', password="Ab123456")
+g_redis_pool = ThinkRedisPool.get_connection_pool(host=g_config.get("redis", "host")
+                                                  , password=g_config.get("redis", "password")
+                                                  , port=g_config.get("redis", "port"))

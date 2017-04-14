@@ -28,6 +28,7 @@ from think_proxy.https_proxy import *
 from controller.Session import *
 from thinkutils.redis.think_redis import *
 from thinkutils.redis.listener import *
+from Config import *
 
 define('tcp_port', default=9001)
 define('http_port', default=9002)

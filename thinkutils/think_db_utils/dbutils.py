@@ -5,5 +5,15 @@ import MySQLdb
 from DBUtils.PooledDB import PooledDB
 import hashlib
 import time
+from Config import *
 
-g_dbPool = PooledDB(MySQLdb, 5, host='localhost', user='notes', passwd='welc0me', db='db_notes', port=3306, charset = "utf8", use_unicode = True)
+g_dbPool = PooledDB(MySQLdb
+                    , 5
+                    , host=g_config.get("mysql", "host")
+                    , user=g_config.get("mysql", "user")
+                    , passwd=g_config.get("mysql", "password")
+                    , db=g_config.get("mysql", "db")
+                    , port=g_config.get("mysql", "port")
+                    , maxconnections=g_config.get("mysql", "maxconnections")
+                    , charset = "utf8"
+                    , use_unicode = True)

@@ -28,15 +28,15 @@ class HttpConsumer(object):
     """
     def process(self):
         """开始读取配置文件"""
-        self.cf.read("user.properties")
+        self.cf.read("app.properties")
         """读取主题"""
-        topic = self.cf.get("property", "Topic")
+        topic = self.cf.get("ali_mq", "Topic")
         """存储消息的URL路径"""
-        url = self.cf.get("property", "URL")
+        url = self.cf.get("ali_mq", "URL")
         """访问码"""
-        ak = self.cf.get("property", "Ak")
+        ak = self.cf.get("ali_mq", "Ak")
         """密钥"""
-        sk = self.cf.get("property", "Sk")
+        sk = self.cf.get("ali_mq", "Sk")
         """Consumer ID"""
         cid = "CID_ZHUOLINK_SDK1"#self.cf.get("property", "ConsumerID")
         newline = "\n"
