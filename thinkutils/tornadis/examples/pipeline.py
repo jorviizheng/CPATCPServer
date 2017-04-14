@@ -1,12 +1,13 @@
 # Let's import tornado and tornadis
 import tornado
-import tornadis
-
+from thinkutils.tornadis.pipeline import *
+from thinkutils.tornadis.client import *
+from thinkutils.tornadis.exceptions import *
 
 @tornado.gen.coroutine
 def pipeline_coroutine():
     # Let's make a pipeline object to stack commands inside
-    pipeline = tornadis.Pipeline()
+    pipeline = Pipeline()
     pipeline.stack_call("SET", "foo", "bar")
     pipeline.stack_call("GET", "foo")
 
@@ -16,7 +17,7 @@ def pipeline_coroutine():
     # (atomic mode) and wait all replies without blocking the tornado ioloop.
     results = yield client.call(pipeline)
 
-    if isinstance(results, tornadis.TornadisException):
+    if isinstance(results, TornadisException):
         # For specific reasons, tornadis nearly never raises any exception
         # they are returned as results
         print "got exception: %s" % results
@@ -30,7 +31,7 @@ def pipeline_coroutine():
 # host: redis host to connect
 # port: redis port to connect
 # autoconnect=True: put the Client object in auto(re)connect mode
-client = tornadis.Client(host="localhost", port=6379, autoconnect=True)
+client = Client(host="localhost", port=6379, autoconnect=True)
 
 # Start a tornado IOLoop, execute the coroutine and end the program
 loop = tornado.ioloop.IOLoop.instance()

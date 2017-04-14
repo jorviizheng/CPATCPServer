@@ -1,16 +1,16 @@
 import tornado
-import tornadis
+from thinkutils.tornadis.exceptions import *
 
 
 @tornado.gen.coroutine
 def ping_redis(num):
     with (yield pool.connected_client()) as client:
-        if not isinstance(client, tornadis.TornadisException):
+        if not isinstance(client, TornadisException):
             # client is a connected tornadis.Client instance
             # it will be automatically released to the pool thanks to the
             # "with" keyword
             reply = yield client.call("PING")
-            if not isinstance(reply, tornadis.TornadisException):
+            if not isinstance(reply, TornadisException):
                 print("reply #%i : %s" % (num, reply))
 
 

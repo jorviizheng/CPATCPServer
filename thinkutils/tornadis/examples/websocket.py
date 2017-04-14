@@ -1,8 +1,7 @@
 import tornado
 from tornado.websocket import WebSocketHandler
 from tornado.web import RequestHandler, Application, url
-import tornadis
-
+from thinkutils.tornadis.client import *
 
 clients = []
 
@@ -18,7 +17,7 @@ class WSHandler(WebSocketHandler):
 
     @tornado.gen.coroutine
     def initialize(self):
-        self.redis = tornadis.Client()
+        self.redis = Client()
         loop = tornado.ioloop.IOLoop.current()
         loop.add_callback(self.watch_redis)
 

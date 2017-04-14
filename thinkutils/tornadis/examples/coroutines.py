@@ -1,6 +1,7 @@
 # Let's import tornado and tornadis
 import tornado
-import tornadis
+from thinkutils.tornadis.client import *
+from thinkutils.tornadis.exceptions import *
 
 
 @tornado.gen.coroutine
@@ -10,7 +11,7 @@ def talk_to_redis():
     # Note: call() method on Client instance returns a Future object (and
     # should be used as a coroutine).
     result = yield client.call("PING")
-    if isinstance(result, tornadis.TornadisException):
+    if isinstance(result, TornadisException):
         # For specific reasons, tornadis nearly never raises any exception
         # they are returned as result
         print "got exception: %s" % result
@@ -23,7 +24,7 @@ def talk_to_redis():
 # host: redis host to connect
 # port: redis port to connect
 # autoconnect=True: put the Client object in auto(re)connect mode
-client = tornadis.Client(host="localhost", port=6379, autoconnect=True)
+client = Client(host="localhost", port=6379, autoconnect=True)
 
 # Start a tornado IOLoop, execute the coroutine and end the program
 loop = tornado.ioloop.IOLoop.instance()

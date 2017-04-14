@@ -1,11 +1,12 @@
 from tornado.ioloop import IOLoop
 from tornado.web import RequestHandler, Application, url
 import tornado.gen
-import tornadis
 import logging
+from thinkutils.tornadis.pool import *
+from thinkutils.tornadis.exceptions import *
 
 logging.basicConfig(level=logging.WARNING)
-POOL = tornadis.ClientPool(max_size=15)
+POOL = ClientPool(max_size=15)
 
 
 class HelloHandler(RequestHandler):
@@ -14,7 +15,7 @@ class HelloHandler(RequestHandler):
     def get(self):
         with (yield POOL.connected_client()) as client:
             reply = yield client.call("PING")
-            if not isinstance(reply, tornadis.TornadisException):
+            if not isinstance(reply, TornadisException):
                 self.write("Hello, %s" % reply)
         self.finish()
 
