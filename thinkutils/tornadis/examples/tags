@@ -1,0 +1,61 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Application	web.py	/^from tornado.web import RequestHandler, Application, url$/;"	i
+Application	websocket.py	/^from tornado.web import RequestHandler, Application, url$/;"	i
+GetHandler	websocket.py	/^class GetHandler(RequestHandler):$/;"	c
+HelloHandler	web.py	/^class HelloHandler(RequestHandler):$/;"	c
+IOLoop	web.py	/^from tornado.ioloop import IOLoop$/;"	i
+POOL	web.py	/^POOL = tornadis.ClientPool(max_size=15)$/;"	v
+RequestHandler	web.py	/^from tornado.web import RequestHandler, Application, url$/;"	i
+RequestHandler	websocket.py	/^from tornado.web import RequestHandler, Application, url$/;"	i
+WSHandler	websocket.py	/^class WSHandler(WebSocketHandler):$/;"	c
+WebSocketHandler	websocket.py	/^from tornado.websocket import WebSocketHandler$/;"	i
+app	websocket.py	/^app = Application([$/;"	v
+client	callbacks.py	/^client = tornadis.Client(host="thinkman-wang.com", password="Ab123456", port=6379, autoconnect=True)$/;"	v
+client	coroutines.py	/^client = tornadis.Client(host="localhost", port=6379, autoconnect=True)$/;"	v
+client	pipeline.py	/^client = tornadis.Client(host="localhost", port=6379, autoconnect=True)$/;"	v
+clients	websocket.py	/^clients = []$/;"	v
+gen	web.py	/^import tornado.gen$/;"	i
+get	web.py	/^    def get(self):$/;"	m	class:HelloHandler
+get	websocket.py	/^    def get(self):$/;"	m	class:GetHandler
+initialize	websocket.py	/^    def initialize(self):$/;"	m	class:WSHandler
+logging	web.py	/^import logging$/;"	i
+loop	callbacks.py	/^loop = tornado.ioloop.IOLoop.instance()$/;"	v
+loop	context_manager.py	/^loop = tornado.ioloop.IOLoop.instance()$/;"	v
+loop	coroutines.py	/^loop = tornado.ioloop.IOLoop.instance()$/;"	v
+loop	pipeline.py	/^loop = tornado.ioloop.IOLoop.instance()$/;"	v
+loop	pubsub.py	/^loop = tornado.ioloop.IOLoop.instance()$/;"	v
+main	callbacks.py	/^def main():$/;"	f
+main	web.py	/^def main():$/;"	f
+make_app	web.py	/^def make_app():$/;"	f
+multiple_ping_redis	context_manager.py	/^def multiple_ping_redis():$/;"	f
+on_close	websocket.py	/^    def on_close(self):$/;"	m	class:WSHandler
+on_message	websocket.py	/^    def on_message(self, message):$/;"	m	class:WSHandler
+open	websocket.py	/^    def open(self, *args):$/;"	m	class:WSHandler
+ping_callback	callbacks.py	/^def ping_callback(result):$/;"	f
+ping_redis	context_manager.py	/^def ping_redis(num):$/;"	f
+pipeline_coroutine	pipeline.py	/^def pipeline_coroutine():$/;"	f
+pool	context_manager.py	/^pool = tornadis.ClientPool(max_size=5)$/;"	v
+pubsub_coroutine	pubsub.py	/^def pubsub_coroutine():$/;"	f
+talk_to_redis	coroutines.py	/^def talk_to_redis():$/;"	f
+tornadis	callbacks.py	/^import tornadis$/;"	i
+tornadis	context_manager.py	/^import tornadis$/;"	i
+tornadis	coroutines.py	/^import tornadis$/;"	i
+tornadis	pipeline.py	/^import tornadis$/;"	i
+tornadis	pubsub.py	/^import tornadis$/;"	i
+tornadis	web.py	/^import tornadis$/;"	i
+tornadis	websocket.py	/^import tornadis$/;"	i
+tornado	callbacks.py	/^import tornado$/;"	i
+tornado	context_manager.py	/^import tornado$/;"	i
+tornado	coroutines.py	/^import tornado$/;"	i
+tornado	pipeline.py	/^import tornado$/;"	i
+tornado	pubsub.py	/^import tornado$/;"	i
+tornado	web.py	/^import tornado.gen$/;"	i
+tornado	websocket.py	/^import tornado$/;"	i
+url	web.py	/^from tornado.web import RequestHandler, Application, url$/;"	i
+url	websocket.py	/^from tornado.web import RequestHandler, Application, url$/;"	i
+watch_redis	websocket.py	/^    def watch_redis(self):$/;"	m	class:WSHandler
