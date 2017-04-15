@@ -10,7 +10,9 @@ def pipeline_coroutine():
     # Let's make a pipeline object to stack commands inside
     pipeline = Pipeline()
     pipeline.stack_call("SET", "foo", "bar")
+    pipeline.stack_call("SET", "fxxk", "123321")
     pipeline.stack_call("GET", "foo")
+    pipeline.stack_call("GET", "fxxk")
 
     # At this point, nothing is sent to redis
 
